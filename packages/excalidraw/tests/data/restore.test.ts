@@ -1,7 +1,16 @@
 import { pointFrom } from "@excalidraw/math";
 import { vi } from "vitest";
 
-import { DEFAULT_SIDEBAR, FONT_FAMILY, ROUNDNESS } from "@excalidraw/common";
+import {
+  ARROW_TYPE,
+  DEFAULT_ELEMENT_PROPS,
+  DEFAULT_ELEMENT_STROKE_WIDTH_KEY,
+  DEFAULT_END_ARROWHEAD,
+  DEFAULT_FONT_FAMILY,
+  DEFAULT_SIDEBAR,
+  FONT_FAMILY,
+  ROUNDNESS,
+} from "@excalidraw/common";
 
 import { newElementWith } from "@excalidraw/element";
 import * as sizeHelpers from "@excalidraw/element";
@@ -734,6 +743,43 @@ describe("restoreElements", () => {
 });
 
 describe("restoreAppState", () => {
+  it("migrates legacy Excalidraw current-item defaults to Technical Precision defaults", () => {
+    const restoredAppState = restore.restoreAppState(
+      {
+        currentItemStrokeColor: "#1e1e1e",
+        currentItemBackgroundColor: "transparent",
+        currentItemFillStyle: "hachure",
+        currentItemStrokeWidthKey: "thin",
+        currentItemRoughness: 1,
+        currentItemStrokeVariability: "variable",
+        currentItemFontFamily: FONT_FAMILY.Excalifont,
+        currentItemArrowType: "round",
+        currentItemEndArrowhead: "arrow",
+      } as any,
+      null,
+    );
+
+    expect(restoredAppState.currentItemStrokeColor).toBe(
+      DEFAULT_ELEMENT_PROPS.strokeColor,
+    );
+    expect(restoredAppState.currentItemBackgroundColor).toBe(
+      DEFAULT_ELEMENT_PROPS.backgroundColor,
+    );
+    expect(restoredAppState.currentItemFillStyle).toBe(
+      DEFAULT_ELEMENT_PROPS.fillStyle,
+    );
+    expect(restoredAppState.currentItemStrokeWidthKey).toBe(
+      DEFAULT_ELEMENT_STROKE_WIDTH_KEY,
+    );
+    expect(restoredAppState.currentItemRoughness).toBe(
+      DEFAULT_ELEMENT_PROPS.roughness,
+    );
+    expect(restoredAppState.currentItemStrokeVariability).toBe("constant");
+    expect(restoredAppState.currentItemFontFamily).toBe(DEFAULT_FONT_FAMILY);
+    expect(restoredAppState.currentItemArrowType).toBe(ARROW_TYPE.elbow);
+    expect(restoredAppState.currentItemEndArrowhead).toBe(DEFAULT_END_ARROWHEAD);
+  });
+
   it("should restore freedraw mode app state values", () => {
     expect(
       restore.restoreAppState(

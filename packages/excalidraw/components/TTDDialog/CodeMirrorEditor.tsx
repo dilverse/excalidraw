@@ -35,32 +35,32 @@ export interface CodeMirrorEditorProps {
 const darkTheme = EditorView.theme(
   {
     "&": {
-      backgroundColor: "#1e1e1e",
-      color: "#d4d4d4",
+      backgroundColor: "#1a1c1f",
+      color: "#f0f0f5",
     },
     ".cm-content": { caretColor: "#fff" },
     ".cm-cursor": { borderLeftColor: "#fff" },
     ".cm-gutters": {
-      backgroundColor: "#1e1e1e",
-      color: "#858585",
+      backgroundColor: "#1a1c1f",
+      color: "#c3c7cb",
       border: "none",
     },
-    ".cm-activeLineGutter": { backgroundColor: "#2a2a2a" },
-    ".cm-activeLine": { backgroundColor: "#2a2a2a" },
-    ".cm-errorLine": { backgroundColor: "rgba(255, 0, 0, 0.15)" },
+    ".cm-activeLineGutter": { backgroundColor: "#2e3034" },
+    ".cm-activeLine": { backgroundColor: "#2e3034" },
+    ".cm-errorLine": { backgroundColor: "rgba(200, 16, 46, 0.18)" },
   },
   { dark: true },
 );
 
 const darkHighlight = HighlightStyle.define([
-  { tag: tags.keyword, color: "#569cd6" },
-  { tag: tags.string, color: "#ce9178" },
-  { tag: tags.comment, color: "#6a9955" },
-  { tag: tags.number, color: "#b5cea8" },
-  { tag: tags.operator, color: "#d4d4d4" },
-  { tag: tags.punctuation, color: "#d4d4d4" },
-  { tag: tags.variableName, color: "#9cdcfe" },
-  { tag: tags.bracket, color: "#ffd700" },
+  { tag: tags.keyword, color: "#3685ff" },
+  { tag: tags.string, color: "#b2cada" },
+  { tag: tags.comment, color: "#c3c7cb" },
+  { tag: tags.number, color: "#ffb3b1" },
+  { tag: tags.operator, color: "#f0f0f5" },
+  { tag: tags.punctuation, color: "#f0f0f5" },
+  { tag: tags.variableName, color: "#f0f0f5" },
+  { tag: tags.bracket, color: "#ffb3b1" },
 ]);
 
 // ---- Light theme ----
@@ -68,29 +68,29 @@ const darkHighlight = HighlightStyle.define([
 const lightTheme = EditorView.theme({
   "&": {
     backgroundColor: "#ffffff",
-    color: "#1e1e1e",
+    color: "#1a1c1f",
   },
-  ".cm-content": { caretColor: "#000" },
-  ".cm-cursor": { borderLeftColor: "#000" },
+  ".cm-content": { caretColor: "#0c2430" },
+  ".cm-cursor": { borderLeftColor: "#0c2430" },
   ".cm-gutters": {
-    backgroundColor: "#fff",
-    color: "#999",
+    backgroundColor: "#f9f9fe",
+    color: "#73787c",
     border: "none",
   },
-  ".cm-activeLineGutter": { backgroundColor: "#e8e8e8" },
-  ".cm-activeLine": { backgroundColor: "#e8e8e8" },
-  ".cm-errorLine": { backgroundColor: "rgba(255, 0, 0, 0.1)" },
+  ".cm-activeLineGutter": { backgroundColor: "#ededf2" },
+  ".cm-activeLine": { backgroundColor: "#ededf2" },
+  ".cm-errorLine": { backgroundColor: "rgba(200, 16, 46, 0.1)" },
 });
 
 const lightHighlight = HighlightStyle.define([
-  { tag: tags.keyword, color: "#0000ff" },
-  { tag: tags.string, color: "#a31515" },
-  { tag: tags.comment, color: "#008000" },
-  { tag: tags.number, color: "#098658" },
-  { tag: tags.operator, color: "#1e1e1e" },
-  { tag: tags.punctuation, color: "#1e1e1e" },
-  { tag: tags.variableName, color: "#001080" },
-  { tag: tags.bracket, color: "#af00db" },
+  { tag: tags.keyword, color: "#007aff" },
+  { tag: tags.string, color: "#c8102e" },
+  { tag: tags.comment, color: "#73787c" },
+  { tag: tags.number, color: "#004493" },
+  { tag: tags.operator, color: "#1a1c1f" },
+  { tag: tags.punctuation, color: "#1a1c1f" },
+  { tag: tags.variableName, color: "#0c2430" },
+  { tag: tags.bracket, color: "#c8102e" },
 ]);
 
 // ---- Error line decoration ----

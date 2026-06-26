@@ -36,7 +36,9 @@ import { ComicShannsFontFaces } from "./ComicShanns";
 import { EmojiFontFaces } from "./Emoji";
 import { ExcalidrawFontFace } from "./ExcalidrawFontFace";
 import { ExcalifontFontFaces } from "./Excalifont";
+import { GeistFontFaces } from "./Geist";
 import { HelveticaFontFaces } from "./Helvetica";
+import { JetBrainsMonoFontFaces } from "./JetBrainsMono";
 import { LiberationFontFaces } from "./Liberation";
 import { LilitaFontFaces } from "./Lilita";
 import { NunitoFontFaces } from "./Nunito";
@@ -385,8 +387,10 @@ export class Fonts {
     init("Cascadia", ...CascadiaFontFaces);
     init("Comic Shanns", ...ComicShannsFontFaces);
     init("Excalifont", ...ExcalifontFontFaces);
+    init("Geist", ...GeistFontFaces);
     // keeping for backwards compatibility reasons, uses system font (Helvetica on MacOS, Arial on Win)
     init("Helvetica", ...HelveticaFontFaces);
+    init("JetBrains Mono", ...JetBrainsMonoFontFaces);
     // used for server-side pdf & png export instead of helvetica (technically does not need metrics, but kept in for consistency)
     init("Liberation Sans", ...LiberationFontFaces);
     init("Lilita One", ...LilitaFontFaces);

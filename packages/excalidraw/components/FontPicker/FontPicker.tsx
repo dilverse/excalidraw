@@ -22,22 +22,22 @@ import "./FontPicker.scss";
 
 export const DEFAULT_FONTS = [
   {
-    value: FONT_FAMILY.Excalifont,
-    icon: FreedrawIcon,
-    text: t("labels.handDrawn"),
-    testId: "font-family-hand-drawn",
-  },
-  {
-    value: FONT_FAMILY.Nunito,
+    value: FONT_FAMILY.Geist,
     icon: FontFamilyNormalIcon,
     text: t("labels.normal"),
     testId: "font-family-normal",
   },
   {
-    value: FONT_FAMILY["Comic Shanns"],
+    value: FONT_FAMILY["JetBrains Mono"],
     icon: FontFamilyCodeIcon,
     text: t("labels.code"),
     testId: "font-family-code",
+  },
+  {
+    value: FONT_FAMILY.Excalifont,
+    icon: FreedrawIcon,
+    text: t("labels.handDrawn"),
+    testId: "font-family-hand-drawn",
   },
 ];
 

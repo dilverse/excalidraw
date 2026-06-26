@@ -36,9 +36,9 @@
       padding: 2.5rem;
 
       background: var(--color-danger-background);
-      border-radius: 0.5rem;
+      border-radius: var(--border-radius-lg);
 
-      font-family: "Assistant";
+      font-family: var(--ui-font);
       font-style: normal;
       font-weight: 400;
       font-size: 1rem;

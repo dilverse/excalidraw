@@ -3,33 +3,65 @@
 /* WARN: The following content is replaced during excalidraw-app build  */
 
 @font-face {
-  font-family: "Assistant";
-  src: url(../fonts/Assistant/Assistant-Regular.woff2) format("woff2");
+  font-family: "Geist";
+  src: url(../fonts/Geist/Geist-Regular.woff2) format("woff2");
   font-weight: 400;
-  style: normal;
-  display: swap;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: "Assistant";
-  src: url(../fonts/Assistant/Assistant-Medium.woff2) format("woff2");
+  font-family: "Geist";
+  src: url(../fonts/Geist/Geist-Medium.woff2) format("woff2");
   font-weight: 500;
-  style: normal;
-  display: swap;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: "Assistant";
-  src: url(../fonts/Assistant/Assistant-SemiBold.woff2) format("woff2");
+  font-family: "Geist";
+  src: url(../fonts/Geist/Geist-SemiBold.woff2) format("woff2");
   font-weight: 600;
-  style: normal;
-  display: swap;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: "Assistant";
-  src: url(../fonts/Assistant/Assistant-Bold.woff2) format("woff2");
+  font-family: "Geist";
+  src: url(../fonts/Geist/Geist-Bold.woff2) format("woff2");
   font-weight: 700;
-  style: normal;
-  display: swap;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url(../fonts/JetBrainsMono/JetBrainsMono-Regular.woff2) format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url(../fonts/JetBrainsMono/JetBrainsMono-Medium.woff2) format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url(../fonts/JetBrainsMono/JetBrainsMono-SemiBold.woff2) format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url(../fonts/JetBrainsMono/JetBrainsMono-Bold.woff2) format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
 }

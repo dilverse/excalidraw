@@ -1018,6 +1018,17 @@ describe("textWysiwyg", () => {
     });
 
     it("should'nt bind text to container when not double clicked on center", async () => {
+      API.setElements([]);
+      rectangle = API.createElement({
+        type: "rectangle",
+        x: 10,
+        y: 20,
+        width: 90,
+        height: 75,
+        backgroundColor: "transparent",
+      });
+      API.setElements([rectangle]);
+
       expect(h.elements.length).toBe(1);
       expect(h.elements[0].id).toBe(rectangle.id);
 
@@ -1096,13 +1107,13 @@ describe("textWysiwyg", () => {
 
       expect(h.state.editingTextElement).toBe(null);
 
-      expect(text.fontFamily).toEqual(FONT_FAMILY.Excalifont);
+      expect(text.fontFamily).toEqual(FONT_FAMILY.Geist);
 
       fireEvent.click(screen.getByTitle(/code/i));
 
       expect(
         (h.elements[1] as ExcalidrawTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY["Comic Shanns"]);
+      ).toEqual(FONT_FAMILY["JetBrains Mono"]);
 
       //undo
       Keyboard.withModifierKeys({ ctrl: true }, () => {
@@ -1110,7 +1121,7 @@ describe("textWysiwyg", () => {
       });
       expect(
         (h.elements[1] as ExcalidrawTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY.Excalifont);
+      ).toEqual(FONT_FAMILY.Geist);
 
       //redo
       Keyboard.withModifierKeys({ ctrl: true, shift: true }, () => {
@@ -1118,7 +1129,7 @@ describe("textWysiwyg", () => {
       });
       expect(
         (h.elements[1] as ExcalidrawTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY["Comic Shanns"]);
+      ).toEqual(FONT_FAMILY["JetBrains Mono"]);
     });
 
     it("should wrap text and vertcially center align once text submitted", async () => {
@@ -1528,7 +1539,7 @@ describe("textWysiwyg", () => {
 
       expect(
         (h.elements[1] as ExcalidrawTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY["Comic Shanns"]);
+      ).toEqual(FONT_FAMILY["JetBrains Mono"]);
       expect(getOriginalContainerHeightFromCache(rectangle.id)).toBe(75);
 
       fireEvent.click(screen.getByTitle(/Very large/i));
@@ -1555,7 +1566,7 @@ describe("textWysiwyg", () => {
       fireEvent.click(screen.getByTitle(/code/i));
       expect(
         (h.elements[1] as ExcalidrawTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY["Comic Shanns"]);
+      ).toEqual(FONT_FAMILY["JetBrains Mono"]);
       expect(
         (h.elements[1] as ExcalidrawTextElementWithContainer).lineHeight,
       ).toEqual(1.25);
@@ -1563,7 +1574,7 @@ describe("textWysiwyg", () => {
       fireEvent.click(screen.getByTitle(/normal/i));
       expect(
         (h.elements[1] as ExcalidrawTextElementWithContainer).fontFamily,
-      ).toEqual(FONT_FAMILY.Nunito);
+      ).toEqual(FONT_FAMILY.Geist);
       expect(
         (h.elements[1] as ExcalidrawTextElementWithContainer).lineHeight,
       ).toEqual(1.25);
@@ -1727,7 +1738,7 @@ describe("textWysiwyg", () => {
       expect(h.elements[1]).toEqual(
         expect.objectContaining({
           angle: 0,
-          backgroundColor: "transparent",
+          backgroundColor: "#f3f3f8",
           boundElements: [
             {
               id: h.elements[2].id,
@@ -1741,11 +1752,11 @@ describe("textWysiwyg", () => {
           link: null,
           locked: false,
           opacity: 100,
-          roughness: 1,
+          roughness: 0,
           roundness: null,
-          strokeColor: "#1e1e1e",
+          strokeColor: "#0c2430",
           strokeStyle: "solid",
-          strokeWidth: 2,
+          strokeWidth: 1.5,
           type: "rectangle",
           updated: 1,
           version: 2,

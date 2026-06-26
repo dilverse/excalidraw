@@ -36,8 +36,10 @@ body.excalidraw-cursor-resize * {
 }
 
 .excalidraw {
-  --ui-font: Assistant, system-ui, BlinkMacSystemFont, -apple-system, Segoe UI,
+  --ui-font: Geist, system-ui, BlinkMacSystemFont, -apple-system, Segoe UI,
     Roboto, Helvetica, Arial, sans-serif;
+  --code-font: "JetBrains Mono", Cascadia, SFMono-Regular, Consolas,
+    "Liberation Mono", monospace;
   font-family: var(--ui-font);
 
   position: relative;
@@ -96,12 +98,8 @@ body.excalidraw-cursor-resize * {
   canvas {
     touch-action: none;
 
-    // following props improve blurriness at certain devicePixelRatios.
-    // AFAIK it doesn't affect export (in fact, export seems sharp either way).
-
-    image-rendering: pixelated; // chromium
-    // NOTE: must be declared *after* the above
-    image-rendering: -moz-crisp-edges; // FF
+    // Use browser antialiasing for smooth typography and technical lines.
+    image-rendering: auto;
 
     z-index: var(--zIndex-canvas);
 
@@ -646,7 +644,7 @@ body.excalidraw-cursor-resize * {
 
   ::-webkit-scrollbar-thumb {
     background: var(--scrollbar-thumb);
-    border-radius: 10px;
+    border-radius: var(--border-radius-full);
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--scrollbar-thumb-hover);
@@ -796,7 +794,7 @@ body.excalidraw-cursor-resize * {
     textarea {
       width: 100%;
       margin: 10px 0;
-      font-family: "Cascadia";
+      font-family: var(--code-font);
       font-size: 0.8em;
     }
   }
@@ -832,10 +830,10 @@ body.excalidraw-cursor-resize * {
     z-index: 1;
     background: rgba(0, 0, 0, 0.5);
     padding: 1rem 1.6rem;
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     color: #fff;
     font-weight: 700;
     letter-spacing: 0.6px;
-    font-family: "Assistant";
+    font-family: var(--ui-font);
   }
 }

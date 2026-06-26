@@ -1063,7 +1063,7 @@ describe("charts", () => {
       );
       const axisLabels = textElements.filter(
         (element) =>
-          element.fontFamily === FONT_FAMILY.Excalifont &&
+          element.fontFamily === FONT_FAMILY.Geist &&
           element.text !== "Dunk" &&
           element.text !== "Egg",
       );

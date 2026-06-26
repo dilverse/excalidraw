@@ -375,8 +375,8 @@ describe("contextMenu element", () => {
 
     const firstRect = API.getSelectedElement();
     expect(firstRect.id).toBe(h.elements[0].id);
-    expect(firstRect.strokeColor).toBe("#e03131");
-    expect(firstRect.backgroundColor).toBe("#a5d8ff");
+    expect(firstRect.strokeColor).toBe("#92001c");
+    expect(firstRect.backgroundColor).toBe("#adc6ff");
     expect(firstRect.fillStyle).toBe("cross-hatch");
     expect(firstRect.strokeWidth).toBe(STROKE_WIDTH.bold);
     expect(firstRect.strokeStyle).toBe("dotted");

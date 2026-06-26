@@ -16,7 +16,7 @@ import type { Theme } from "@excalidraw/element/types";
 export const iconFillColor = (theme: Theme) => "var(--icon-fill-color)";
 
 const handlerColor = (theme: Theme) =>
-  theme === THEME.LIGHT ? "#fff" : "#1e1e1e";
+  theme === THEME.LIGHT ? "#fff" : "#1a1c1f";
 
 type Opts = {
   width?: number;

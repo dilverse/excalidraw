@@ -162,7 +162,7 @@
       margin-bottom: -#{$padding + $border};
       border: $border solid var(--sidebar-border-color);
       background: var(--default-bg-color);
-      border-radius: 0.625rem;
+      border-radius: var(--border-radius-lg);
 
       .sidebar-tab-trigger {
         height: var(--lg-button-size);

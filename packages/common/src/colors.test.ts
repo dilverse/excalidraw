@@ -1,12 +1,23 @@
 import {
   applyDarkModeFilter,
   COLOR_PALETTE,
+  DEFAULT_ELEMENT_BACKGROUND_PICKS,
   rgbToHex,
 } from "@excalidraw/common";
 
 describe("COLOR_PALETTE", () => {
   it("color palette doesn't regress", () => {
     expect(COLOR_PALETTE).toMatchSnapshot();
+  });
+
+  it("exposes Technical Precision diagram fills as background quick picks", () => {
+    expect(DEFAULT_ELEMENT_BACKGROUND_PICKS).toEqual([
+      COLOR_PALETTE.transparent,
+      COLOR_PALETTE.red[3],
+      COLOR_PALETTE.red[0],
+      COLOR_PALETTE.black,
+      "#f3f3f8",
+    ]);
   });
 });
 
@@ -100,9 +111,9 @@ describe("applyDarkModeFilter", () => {
 
   describe("COLOR_PALETTE regression tests", () => {
     it("transforms black from palette", () => {
-      // COLOR_PALETTE.black is #1e1e1e (not pure black)
+      // COLOR_PALETTE.black is the Technical Precision primary stroke.
       const result = applyDarkModeFilter(COLOR_PALETTE.black);
-      expect(result).toBe("#d3d3d3");
+      expect(result).toBe("#c1d6e0");
     });
 
     it("transforms white from palette", () => {

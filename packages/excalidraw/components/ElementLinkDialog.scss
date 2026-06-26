@@ -8,8 +8,8 @@
 
     z-index: var(--zIndex-modal);
 
-    border-radius: 10px;
-    padding: 1.5rem;
+    border-radius: var(--border-radius-lg);
+    padding: 1rem;
 
     display: flex;
     flex-direction: column;

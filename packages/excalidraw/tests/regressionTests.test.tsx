@@ -175,8 +175,8 @@ describe("regression tests", () => {
 
     togglePopover("Stroke");
     UI.clickOnTestId("color-blue");
-    expect(API.getSelectedElement().backgroundColor).toBe("#ffc9c9");
-    expect(API.getSelectedElement().strokeColor).toBe("#1971c2");
+    expect(API.getSelectedElement().backgroundColor).toBe("#ffb3b1");
+    expect(API.getSelectedElement().strokeColor).toBe("#004493");
   });
 
   it("click on an element and drag it", () => {
@@ -657,9 +657,11 @@ describe("regression tests", () => {
 
   it("updates fontSize & fontFamily appState", () => {
     UI.clickTool("text");
-    expect(h.state.currentItemFontFamily).toEqual(FONT_FAMILY.Excalifont);
+    expect(h.state.currentItemFontFamily).toEqual(FONT_FAMILY.Geist);
     fireEvent.click(screen.getByTitle(/code/i));
-    expect(h.state.currentItemFontFamily).toEqual(FONT_FAMILY["Comic Shanns"]);
+    expect(h.state.currentItemFontFamily).toEqual(
+      FONT_FAMILY["JetBrains Mono"],
+    );
   });
 
   it("deselects selected element, on pointer up, when click hits element bounding box but doesn't hit the element", () => {

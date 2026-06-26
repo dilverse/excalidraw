@@ -22,7 +22,7 @@
     height: 3rem;
     position: fixed;
     z-index: var(--zIndex-eyeDropperPreview);
-    border-radius: 1rem;
+    border-radius: var(--border-radius-lg);
     border: 1px solid var(--default-border-color);
     filter: var(--theme-filter);
   }
@@ -34,7 +34,7 @@
     padding: 4px;
     margin-right: -4px;
     margin-left: -2px;
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius-lg);
     color: var(--icon-fill-color);
 
     &:hover {

@@ -146,16 +146,14 @@ export const DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX = 1;
 
 export const COLOR_PALETTE = {
   transparent: "transparent",
-  black: "#1e1e1e",
+  black: "#0c2430",
   white: "#ffffff",
-  // open-color from https://github.com/yeun/open-color/blob/master/open-color.js
-  // corresponds to indexes [0,2,4,6,8] (weights: 50, 200, 400, 600, 800)
-  gray: ["#f8f9fa", "#e9ecef", "#ced4da", "#868e96", "#343a40"],
-  red: ["#fff5f5", "#ffc9c9", "#ff8787", "#fa5252", "#e03131"],
+  gray: ["#f9f9fe", "#ededf2", "#c3c7cb", "#73787c", "#42474b"],
+  red: ["#ffdad8", "#ffb3b1", "#e0283c", "#c8102e", "#92001c"],
   pink: ["#fff0f6", "#fcc2d7", "#f783ac", "#e64980", "#c2255c"],
   grape: ["#f8f0fc", "#eebefa", "#da77f2", "#be4bdb", "#9c36b5"],
   violet: ["#f3f0ff", "#d0bfff", "#9775fa", "#7950f2", "#6741d9"],
-  blue: ["#e7f5ff", "#a5d8ff", "#4dabf7", "#228be6", "#1971c2"],
+  blue: ["#d8e2ff", "#adc6ff", "#3685ff", "#007aff", "#004493"],
   cyan: ["#e3fafc", "#99e9f2", "#3bc9db", "#15aabf", "#0c8599"],
   teal: ["#e6fcf5", "#96f2d7", "#38d9a9", "#12b886", "#099268"],
   green: ["#ebfbee", "#b2f2bb", "#69db7c", "#40c057", "#2f9e44"],
@@ -187,32 +185,28 @@ const COMMON_ELEMENT_SHADES = pick(COLOR_PALETTE, [
 // ORDER matters for positioning in quick picker
 export const DEFAULT_ELEMENT_STROKE_PICKS = [
   COLOR_PALETTE.black,
-  COLOR_PALETTE.red[DEFAULT_ELEMENT_STROKE_COLOR_INDEX],
-  COLOR_PALETTE.green[DEFAULT_ELEMENT_STROKE_COLOR_INDEX],
-  COLOR_PALETTE.blue[DEFAULT_ELEMENT_STROKE_COLOR_INDEX],
-  COLOR_PALETTE.yellow[DEFAULT_ELEMENT_STROKE_COLOR_INDEX],
+  "#c8102e",
+  "#007aff",
+  "#42474b",
+  "#73787c",
 ] as ColorTuple;
 
 // ORDER matters for positioning in quick picker
 export const DEFAULT_ELEMENT_BACKGROUND_PICKS = [
   COLOR_PALETTE.transparent,
-  COLOR_PALETTE.red[DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX],
-  COLOR_PALETTE.green[DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX],
-  COLOR_PALETTE.blue[DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX],
-  COLOR_PALETTE.yellow[DEFAULT_ELEMENT_BACKGROUND_COLOR_INDEX],
+  COLOR_PALETTE.red[3],
+  COLOR_PALETTE.red[0],
+  COLOR_PALETTE.black,
+  "#f3f3f8",
 ] as ColorTuple;
 
 // ORDER matters for positioning in quick picker
 export const DEFAULT_CANVAS_BACKGROUND_PICKS = [
   COLOR_PALETTE.white,
-  // radix slate2
-  "#f8f9fa",
-  // radix blue2
-  "#f5faff",
-  // radix yellow2
-  "#fffce8",
-  // radix bronze2
-  "#fdf8f6",
+  "#f9f9fe",
+  "#f2f2f7",
+  "#ededf2",
+  "#e2e2e7",
 ] as ColorTuple;
 
 // palette defaults

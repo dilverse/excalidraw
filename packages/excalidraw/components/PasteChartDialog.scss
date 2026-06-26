@@ -57,7 +57,7 @@
     .ChartPreview {
       width: 260px;
       min-height: 190px;
-      border-radius: 8px;
+      border-radius: var(--border-radius-lg);
       padding: 10px;
       border: 1px solid $color-gray-4;
       display: flex;

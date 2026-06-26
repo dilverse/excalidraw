@@ -20,13 +20,13 @@
     flex-direction: row;
     align-items: flex-start;
 
-    padding: 3px;
-    border-radius: 10px;
+    padding: 0.25rem;
+    border-radius: var(--border-radius-lg);
 
     background: var(--RadioGroup-background);
     border: 1px solid var(--RadioGroup-border);
 
-    gap: 2px;
+    gap: 0.25rem;
 
     &__choice {
       box-sizing: content-box;
@@ -41,9 +41,9 @@
       color: var(--RadioGroup-choice-color-off);
       background: var(--RadioGroup-choice-background-off);
 
-      border-radius: 8px;
+      border-radius: var(--border-radius-lg);
 
-      font-family: "Assistant";
+      font-family: var(--ui-font);
       font-style: normal;
       font-weight: 600;
       font-size: 0.75rem;
@@ -80,7 +80,7 @@
         margin: 0;
         padding: 0;
 
-        border-radius: 8px;
+        border-radius: var(--border-radius-lg);
 
         -webkit-appearance: none;
         -moz-appearance: none;

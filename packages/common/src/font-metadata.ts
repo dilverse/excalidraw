@@ -111,6 +111,22 @@ export const FONT_METADATA: Record<number, FontMetadata> = {
     },
     private: true,
   },
+  [FONT_FAMILY.Geist]: {
+    metrics: {
+      unitsPerEm: 1000,
+      ascender: 1005,
+      descender: -295,
+      lineHeight: 1.25,
+    },
+  },
+  [FONT_FAMILY["JetBrains Mono"]]: {
+    metrics: {
+      unitsPerEm: 1000,
+      ascender: 1020,
+      descender: -300,
+      lineHeight: 1.25,
+    },
+  },
   [FONT_FAMILY_FALLBACKS.Xiaolai]: {
     metrics: {
       unitsPerEm: 1000,

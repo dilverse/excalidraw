@@ -1,10 +1,10 @@
 @import "../packages/excalidraw/css/variables.module.scss";
 
 .excalidraw {
-  --color-primary-contrast-offset: #625ee0; // to offset Chubb illusion
+  --color-primary-contrast-offset: #001a41;
 
   &.theme--dark {
-    --color-primary-contrast-offset: #726dff; // to offset Chubb illusion
+    --color-primary-contrast-offset: #cee6f6;
   }
 
   .footer-center {
@@ -112,12 +112,12 @@
   }
 
   &:hover {
-    background-color: var(--color-primary);
+    background-color: var(--color-brand-hover);
     color: white !important;
   }
 
   &:active {
-    background-color: var(--color-primary-darker);
+    background-color: var(--color-brand-active);
   }
 }
 

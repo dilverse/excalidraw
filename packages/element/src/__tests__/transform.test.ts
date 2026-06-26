@@ -161,6 +161,9 @@ describe("Test Transform", () => {
     );
 
     expect(excalidrawElements.length).toBe(4);
+    expect((excalidrawElements[0] as ExcalidrawArrowElement).endArrowhead).toBe(
+      "triangle",
+    );
 
     excalidrawElements.forEach((ele) => {
       expect(ele).toMatchSnapshot({

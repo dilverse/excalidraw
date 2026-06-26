@@ -1,6 +1,16 @@
 import React from "react";
 
-import { EXPORT_DATA_TYPES, MIME_TYPES } from "@excalidraw/common";
+import {
+  ARROW_TYPE,
+  DEFAULT_ELEMENT_PROPS,
+  DEFAULT_ELEMENT_STROKE_WIDTH_KEY,
+  DEFAULT_END_ARROWHEAD,
+  DEFAULT_FONT_FAMILY,
+  DEFAULT_FONT_SIZE,
+  DEFAULT_START_ARROWHEAD,
+  EXPORT_DATA_TYPES,
+  MIME_TYPES,
+} from "@excalidraw/common";
 
 import type { ExcalidrawTextElement } from "@excalidraw/element/types";
 
@@ -14,6 +24,33 @@ import { fireEvent, queryByTestId, render, waitFor } from "./test-utils";
 const { h } = window;
 
 describe("appState", () => {
+  it("uses Technical Precision as the native drawing defaults", () => {
+    const defaultAppState = getDefaultAppState();
+
+    expect(defaultAppState.currentItemStrokeColor).toBe(
+      DEFAULT_ELEMENT_PROPS.strokeColor,
+    );
+    expect(defaultAppState.currentItemStrokeColor).toBe("#0c2430");
+    expect(defaultAppState.currentItemBackgroundColor).toBe(
+      DEFAULT_ELEMENT_PROPS.backgroundColor,
+    );
+    expect(defaultAppState.currentItemBackgroundColor).toBe("#f3f3f8");
+    expect(defaultAppState.currentItemFillStyle).toBe("solid");
+    expect(defaultAppState.currentItemStrokeWidthKey).toBe(
+      DEFAULT_ELEMENT_STROKE_WIDTH_KEY,
+    );
+    expect(defaultAppState.currentItemRoughness).toBe(0);
+    expect(defaultAppState.currentItemRoundness).toBe("sharp");
+    expect(defaultAppState.currentItemArrowType).toBe(ARROW_TYPE.elbow);
+    expect(defaultAppState.currentItemStartArrowhead).toBe(
+      DEFAULT_START_ARROWHEAD,
+    );
+    expect(defaultAppState.currentItemEndArrowhead).toBe(DEFAULT_END_ARROWHEAD);
+    expect(defaultAppState.currentItemEndArrowhead).toBe("triangle");
+    expect(defaultAppState.currentItemFontFamily).toBe(DEFAULT_FONT_FAMILY);
+    expect(defaultAppState.currentItemFontSize).toBe(DEFAULT_FONT_SIZE);
+  });
+
   it("drag&drop file doesn't reset non-persisted appState", async () => {
     const defaultAppState = getDefaultAppState();
     const exportBackground = !defaultAppState.exportBackground;

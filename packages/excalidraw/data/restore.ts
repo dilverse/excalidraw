@@ -1,7 +1,9 @@
 import { isFiniteNumber, isValidPoint, pointFrom } from "@excalidraw/math";
 
 import {
+  ARROW_TYPE,
   type CombineBrandsIfNeeded,
+  DEFAULT_END_ARROWHEAD,
   DEFAULT_FONT_FAMILY,
   DEFAULT_STROKE_STREAMLINE,
   DEFAULT_TEXT_ALIGN,
@@ -240,9 +242,16 @@ const restoreStrokeVariability = (
 };
 
 const getStrokeWidthKey = (strokeWidth: unknown): StrokeWidthKey | null => {
-  return isFiniteNumber(strokeWidth)
-    ? STROKE_WIDTH_KEYS.find((key) => STROKE_WIDTH[key] === strokeWidth) ?? null
-    : null;
+  if (!isFiniteNumber(strokeWidth)) {
+    return null;
+  }
+
+  return (
+    STROKE_WIDTH_KEYS.find((key) => STROKE_WIDTH[key] === strokeWidth) ??
+    // Older scenes stored the bold stroke width as 4px. Keep restoring that
+    // semantic value even though Technical Precision uses a tighter 3px bold.
+    (strokeWidth === 4 ? "bold" : null)
+  );
 };
 
 const restoreFreedrawStrokeOptions = (
@@ -1056,6 +1065,64 @@ const LegacyAppStateMigrations: {
   },
 };
 
+const LEGACY_EXCALIDRAW_CURRENT_ITEM_DEFAULTS: Partial<AppState> = {
+  currentItemStrokeColor: "#1e1e1e",
+  currentItemBackgroundColor: "transparent",
+  currentItemFillStyle: "hachure",
+  currentItemStrokeWidthKey: "thin",
+  currentItemRoughness: 1,
+  currentItemStrokeVariability: "variable",
+  currentItemFontFamily: FONT_FAMILY.Excalifont,
+  currentItemArrowType: ARROW_TYPE.round,
+  currentItemEndArrowhead: "arrow",
+};
+
+const migrateLegacyExcalidrawCurrentItemDefaults = (
+  nextAppState: ReturnType<typeof getDefaultAppState>,
+  appState: Exclude<ImportedDataState["appState"], null | undefined>,
+  localAppState: Partial<AppState> | null | undefined,
+  defaultAppState: ReturnType<typeof getDefaultAppState>,
+) => {
+  let legacyCurrentItemDefaultMatches = 0;
+
+  const isLegacyDefaultSnapshot = (
+    Object.entries(LEGACY_EXCALIDRAW_CURRENT_ITEM_DEFAULTS) as [
+      keyof typeof LEGACY_EXCALIDRAW_CURRENT_ITEM_DEFAULTS,
+      any,
+    ][]
+  ).every(([key, legacyValue]) => {
+    const suppliedValue =
+      appState[key] !== undefined ? appState[key] : localAppState?.[key];
+
+    if (suppliedValue === legacyValue) {
+      legacyCurrentItemDefaultMatches += 1;
+      return true;
+    }
+
+    return (
+      suppliedValue === undefined ||
+      suppliedValue === defaultAppState[key as keyof typeof defaultAppState]
+    );
+  });
+
+  if (!isLegacyDefaultSnapshot || legacyCurrentItemDefaultMatches < 3) {
+    return;
+  }
+
+  nextAppState.currentItemStrokeColor = DEFAULT_ELEMENT_PROPS.strokeColor;
+  nextAppState.currentItemBackgroundColor =
+    DEFAULT_ELEMENT_PROPS.backgroundColor;
+  nextAppState.currentItemFillStyle = DEFAULT_ELEMENT_PROPS.fillStyle;
+  nextAppState.currentItemStrokeWidthKey =
+    defaultAppState.currentItemStrokeWidthKey;
+  nextAppState.currentItemRoughness = DEFAULT_ELEMENT_PROPS.roughness;
+  nextAppState.currentItemStrokeVariability =
+    defaultAppState.currentItemStrokeVariability;
+  nextAppState.currentItemFontFamily = DEFAULT_FONT_FAMILY;
+  nextAppState.currentItemArrowType = ARROW_TYPE.elbow;
+  nextAppState.currentItemEndArrowhead = DEFAULT_END_ARROWHEAD;
+};
+
 export const restoreAppState = (
   appState: ImportedDataState["appState"],
   localAppState: Partial<AppState> | null | undefined,
@@ -1108,6 +1175,13 @@ export const restoreAppState = (
       getStrokeWidthKey((appState as any).currentItemStrokeWidth) ??
       defaultAppState.currentItemStrokeWidthKey;
   }
+
+  migrateLegacyExcalidrawCurrentItemDefaults(
+    nextAppState,
+    appState,
+    localAppState,
+    defaultAppState,
+  );
 
   return {
     ...nextAppState,

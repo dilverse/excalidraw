@@ -1,4 +1,8 @@
-import { fireEvent, queryByTestId } from "@testing-library/react";
+import {
+  fireEvent,
+  queryAllByTestId,
+  queryByTestId,
+} from "@testing-library/react";
 
 import {
   COLOR_PALETTE,
@@ -30,11 +34,12 @@ describe("element locking", () => {
       API.setAppState({
         currentItemBackgroundColor: color,
       });
-      const activeColor = queryByTestId(
+      const activeColors = queryAllByTestId(
         document.body,
         `color-top-pick-${color}`,
       );
-      expect(activeColor).toHaveClass("active");
+      expect(activeColors.some((element) => element.classList.contains("active")))
+        .toBe(true);
     });
 
     it("should show fill style when background non-transparent", () => {
@@ -216,7 +221,7 @@ describe("element locking", () => {
       });
       const text = API.createElement({
         type: "text",
-        fontFamily: FONT_FAMILY["Comic Shanns"],
+        fontFamily: FONT_FAMILY["JetBrains Mono"],
       });
       API.setElements([rect, text]);
       API.setSelectedElements([rect, text]);

@@ -200,7 +200,7 @@ $verticalBreakpoint: 861px;
         min-width: 6rem;
 
         .chat-message__body {
-          font-family: monospace;
+          font-family: var(--code-font);
         }
       }
     }
@@ -216,7 +216,7 @@ $verticalBreakpoint: 861px;
         min-width: 6rem;
 
         .chat-message__body {
-          font-family: monospace;
+          font-family: var(--code-font);
         }
       }
     }

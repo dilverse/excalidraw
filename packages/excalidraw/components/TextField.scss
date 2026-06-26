@@ -36,7 +36,7 @@
     }
 
     &__label {
-      font-family: "Assistant";
+      font-family: var(--ui-font);
       font-style: normal;
       font-weight: 600;
       font-size: 0.875rem;
@@ -59,7 +59,7 @@
 
       background: var(--ExcTextField--background);
       border: 1px solid var(--ExcTextField--border);
-      border-radius: 0.5rem;
+      border-radius: var(--border-radius-lg);
 
       padding: 0 0.75rem;
 
@@ -87,7 +87,7 @@
 
         color: var(--ExcTextField--color);
 
-        font-family: "Assistant";
+        font-family: var(--ui-font);
         font-style: normal;
         font-weight: 400;
         font-size: 1rem;

@@ -4,8 +4,6 @@ import type {
 } from "@excalidraw/element/types";
 import type { AppProps, AppState } from "@excalidraw/excalidraw/types";
 
-import { COLOR_PALETTE } from "./colors";
-
 export const supportsResizeObserver =
   typeof window !== "undefined" && "ResizeObserver" in window;
 
@@ -138,6 +136,8 @@ export const FONT_FAMILY = {
   "Comic Shanns": 8,
   "Liberation Sans": 9,
   Assistant: 10,
+  Geist: 11,
+  "JetBrains Mono": 12,
 };
 
 // Segoe UI Emoji fails to properly fallback for some glyphs: ∞, ∫, ≠
@@ -162,6 +162,7 @@ export function getGenericFontFamilyFallback(
   switch (fontFamily) {
     case FONT_FAMILY.Cascadia:
     case FONT_FAMILY["Comic Shanns"]:
+    case FONT_FAMILY["JetBrains Mono"]:
       return MONOSPACE_GENERIC_FONT;
 
     default:
@@ -194,24 +195,24 @@ export const THEME = {
 export const DARK_THEME_FILTER = "invert(93%) hue-rotate(180deg)";
 
 export const FRAME_STYLE = {
-  strokeColor: "#bbb" as ExcalidrawElement["strokeColor"],
+  strokeColor: "#0c2430" as ExcalidrawElement["strokeColor"],
   strokeWidth: 2 as ExcalidrawElement["strokeWidth"],
   strokeStyle: "solid" as ExcalidrawElement["strokeStyle"],
   fillStyle: "solid" as ExcalidrawElement["fillStyle"],
   roughness: 0 as ExcalidrawElement["roughness"],
   roundness: null as ExcalidrawElement["roundness"],
   backgroundColor: "transparent" as ExcalidrawElement["backgroundColor"],
-  radius: 8,
+  radius: 4,
   nameOffsetY: 3,
-  nameColorLightTheme: "#999999",
-  nameColorDarkTheme: "#7a7a7a",
+  nameColorLightTheme: "#42474b",
+  nameColorDarkTheme: "#c3c7cb",
   nameFontSize: 14,
   nameLineHeight: 1.25,
 };
 
 export const MIN_FONT_SIZE = 1;
 export const DEFAULT_FONT_SIZE = 20;
-export const DEFAULT_FONT_FAMILY: FontFamilyValues = FONT_FAMILY.Excalifont;
+export const DEFAULT_FONT_FAMILY: FontFamilyValues = FONT_FAMILY.Geist;
 export const DEFAULT_TEXT_ALIGN = "left";
 export const DEFAULT_VERTICAL_ALIGN = "top";
 export const DEFAULT_VERSION = "{version}";
@@ -225,9 +226,9 @@ export const DEFAULT_COLLISION_THRESHOLD =
   2 * SIDE_RESIZING_THRESHOLD - EPSILON;
 
 export const COLOR_WHITE = "#ffffff";
-export const COLOR_CHARCOAL_BLACK = "#1e1e1e";
+export const COLOR_CHARCOAL_BLACK = "#0c2430";
 // keep this in sync with CSS
-export const COLOR_VOICE_CALL = "#a2f1a6";
+export const COLOR_VOICE_CALL = "#47b87c";
 
 export const CANVAS_ONLY_ACTIONS = ["selectAll"];
 
@@ -377,7 +378,7 @@ export const ELEMENT_READY_TO_ERASE_OPACITY = 20;
 // below the cutoff size.
 export const DEFAULT_PROPORTIONAL_RADIUS = 0.25;
 // Fixed radius for the ADAPTIVE_RADIUS algorithm. In pixels.
-export const DEFAULT_ADAPTIVE_RADIUS = 32;
+export const DEFAULT_ADAPTIVE_RADIUS = 4;
 // roundness type (algorithm)
 export const ROUNDNESS = {
   // Used for legacy rounding (rectangles), which currently works the same
@@ -416,8 +417,8 @@ export const STROKE_WIDTH: Readonly<
   Record<StrokeWidthKey | "extraBold", ExcalidrawElement["strokeWidth"]>
 > = {
   thin: 1,
-  medium: 2,
-  bold: 4,
+  medium: 1.5,
+  bold: 3,
   extraBold: 8, // unused (may be introduced in the future)
 };
 
@@ -456,12 +457,12 @@ export const DEFAULT_ELEMENT_PROPS: {
   opacity: ExcalidrawElement["opacity"];
   locked: ExcalidrawElement["locked"];
 } = {
-  strokeColor: COLOR_PALETTE.black,
-  backgroundColor: COLOR_PALETTE.transparent,
+  strokeColor: "#0c2430",
+  backgroundColor: "#f3f3f8",
   fillStyle: "solid",
   strokeWidth: STROKE_WIDTH[DEFAULT_ELEMENT_STROKE_WIDTH_KEY],
   strokeStyle: "solid",
-  roughness: ROUGHNESS.artist,
+  roughness: ROUGHNESS.architect,
   opacity: 100,
   locked: false,
 };
@@ -522,6 +523,11 @@ export const ARROW_TYPE: { [T in AppState["currentItemArrowType"]]: T } = {
   round: "round",
   elbow: "elbow",
 };
+
+export const DEFAULT_START_ARROWHEAD: AppState["currentItemStartArrowhead"] =
+  null;
+export const DEFAULT_END_ARROWHEAD: AppState["currentItemEndArrowhead"] =
+  "triangle";
 
 export const DEFAULT_REDUCED_GLOBAL_ALPHA = 0.3;
 export const ELEMENT_LINK_KEY = "element";

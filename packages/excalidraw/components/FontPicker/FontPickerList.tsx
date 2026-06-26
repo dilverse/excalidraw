@@ -76,11 +76,13 @@ const getFontFamilyIcon = (fontFamily: FontFamilyValues): JSX.Element => {
       return FreedrawIcon;
     case FONT_FAMILY.Nunito:
     case FONT_FAMILY.Helvetica:
+    case FONT_FAMILY.Geist:
       return FontFamilyNormalIcon;
     case FONT_FAMILY["Lilita One"]:
       return FontFamilyHeadingIcon;
     case FONT_FAMILY["Comic Shanns"]:
     case FONT_FAMILY.Cascadia:
+    case FONT_FAMILY["JetBrains Mono"]:
       return FontFamilyCodeIcon;
     default:
       return FontFamilyNormalIcon;

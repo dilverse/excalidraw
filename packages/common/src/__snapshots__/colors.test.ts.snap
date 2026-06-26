@@ -2,13 +2,13 @@
 
 exports[`COLOR_PALETTE > color palette doesn't regress 1`] = `
 {
-  "black": "#1e1e1e",
+  "black": "#0c2430",
   "blue": [
-    "#e7f5ff",
-    "#a5d8ff",
-    "#4dabf7",
-    "#228be6",
-    "#1971c2",
+    "#d8e2ff",
+    "#adc6ff",
+    "#3685ff",
+    "#007aff",
+    "#004493",
   ],
   "bronze": [
     "#f8f1ee",
@@ -32,11 +32,11 @@ exports[`COLOR_PALETTE > color palette doesn't regress 1`] = `
     "#9c36b5",
   ],
   "gray": [
-    "#f8f9fa",
-    "#e9ecef",
-    "#ced4da",
-    "#868e96",
-    "#343a40",
+    "#f9f9fe",
+    "#ededf2",
+    "#c3c7cb",
+    "#73787c",
+    "#42474b",
   ],
   "green": [
     "#ebfbee",
@@ -60,11 +60,11 @@ exports[`COLOR_PALETTE > color palette doesn't regress 1`] = `
     "#c2255c",
   ],
   "red": [
-    "#fff5f5",
-    "#ffc9c9",
-    "#ff8787",
-    "#fa5252",
-    "#e03131",
+    "#ffdad8",
+    "#ffb3b1",
+    "#e0283c",
+    "#c8102e",
+    "#92001c",
   ],
   "teal": [
     "#e6fcf5",
@@ -94,13 +94,13 @@ exports[`COLOR_PALETTE > color palette doesn't regress 1`] = `
 
 exports[`applyDarkModeFilter > COLOR_PALETTE regression tests > matches snapshot for all palette colors 1`] = `
 {
-  "black": "#d3d3d3",
+  "black": "#c1d6e0",
   "blue": [
-    "#121e26",
-    "#154162",
-    "#2273b4",
-    "#3791e0",
-    "#56a2e8",
+    "#232b44",
+    "#304576",
+    "#4589f2",
+    "#37a0ff",
+    "#88c2ff",
   ],
   "bronze": [
     "#221c1a",
@@ -124,11 +124,11 @@ exports[`applyDarkModeFilter > COLOR_PALETTE regression tests > matches snapshot
     "#e28af8",
   ],
   "gray": [
-    "#161718",
-    "#202325",
-    "#33383d",
-    "#6e757c",
-    "#b7bcc1",
+    "#16161a",
+    "#202024",
+    "#404346",
+    "#83878a",
+    "#adb1b4",
   ],
   "green": [
     "#0f1d12",
@@ -152,11 +152,11 @@ exports[`applyDarkModeFilter > COLOR_PALETTE regression tests > matches snapshot
     "#ff8dbc",
   ],
   "red": [
-    "#1f1717",
-    "#5a2c2c",
-    "#b44d4d",
-    "#fa6969",
-    "#ff8383",
+    "#452524",
+    "#793836",
+    "#ff8596",
+    "#ff98b1",
+    "#ffb4cc",
   ],
   "teal": [
     "#0a1d17",

@@ -13,7 +13,7 @@
     }
 
     h3 {
-      font-family: "Assistant";
+      font-family: var(--ui-font);
       font-weight: 700;
       font-size: 1.313rem;
       line-height: 130%;
@@ -44,9 +44,9 @@
       height: 1.125rem;
 
       border: none;
-      border-radius: 0.6875rem;
+      border-radius: var(--border-radius-lg);
 
-      font-family: "Assistant";
+      font-family: var(--ui-font);
       font-style: normal;
       font-weight: 600;
       font-size: 0.75rem;
