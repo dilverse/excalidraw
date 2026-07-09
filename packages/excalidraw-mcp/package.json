@@ -1,0 +1,34 @@
+{
+  "name": "@excalidraw/mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP server for generating Excalidraw diagrams with the Technical Precision design system",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "excalidraw-mcp": "./dist/main.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "start": "node ./dist/main.js",
+    "test": "vitest run --root ../.. --config ../../vitest.config.mts packages/excalidraw-mcp/src --watch=false",
+    "typecheck": "tsc -p tsconfig.build.json --noEmit"
+  },
+  "dependencies": {
+    "@excalidraw/common": "0.18.0",
+    "@excalidraw/element": "0.18.0",
+    "@modelcontextprotocol/sdk": "1.25.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0"
+  }
+}
