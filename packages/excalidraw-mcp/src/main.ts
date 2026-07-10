@@ -1,16 +1,20 @@
 #!/usr/bin/env node
-import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
-import cors from "cors";
-import type { Request, Response } from "express";
 import { randomUUID } from "node:crypto";
+import path from "node:path";
 import { pathToFileURL } from "node:url";
+
+import cors from "cors";
+import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 
 import { FileCheckpointStore } from "./checkpoint-store.js";
 import { createServer } from "./server.js";
+
+import type { Request, Response } from "express";
+
+import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 
 export const startStdioServer = async (
   createMcpServer: () => McpServer,
@@ -68,10 +72,7 @@ export const startStreamableHTTPServer = async (
         return;
       }
 
-      let transport: StreamableHTTPServerTransport;
-      let server: McpServer;
-
-      transport = new StreamableHTTPServerTransport({
+      const transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => randomUUID(),
         onsessioninitialized: (sessionId) => {
           sessions.set(sessionId, { server, transport });
@@ -80,7 +81,7 @@ export const startStreamableHTTPServer = async (
           sessions.delete(sessionId);
         },
       });
-      server = createMcpServer();
+      const server = createMcpServer();
       transport.onclose = () => {
         const sessionId = transport.sessionId;
 
@@ -124,7 +125,9 @@ export const startStreamableHTTPServer = async (
 
   app.listen(port, () => {
     // eslint-disable-next-line no-console
-    console.log(`Excalidraw MCP server listening on http://localhost:${port}/mcp`);
+    console.log(
+      `Excalidraw MCP server listening on http://localhost:${port}/mcp`,
+    );
   });
 };
 
@@ -143,7 +146,11 @@ const main = async () => {
   await startStreamableHTTPServer(createMcpServer);
 };
 
-if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
+const entrypointUrl = process.argv[1]
+  ? pathToFileURL(path.resolve(process.argv[1])).href
+  : "";
+
+if (import.meta.url === entrypointUrl) {
   main().catch((error) => {
     // eslint-disable-next-line no-console
     console.error(error);

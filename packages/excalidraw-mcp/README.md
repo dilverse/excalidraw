@@ -78,6 +78,18 @@ When fields are omitted, the server applies the repo defaults:
 - Arrow end: triangle
 - Arrow shape: elbowed
 
+For common infrastructure diagrams, callers can omit color fields and provide a temporary semantic `role` hint. The server consumes the role and removes it from returned elements:
+
+- `minio`: red fill, dark red stroke, white label text.
+- `erasureSet` / `erasure-set`: transparent fill, red stroke, primary label text.
+- `node`: pale red node fill, primary label text.
+- `storage`: white fill, red stroke, primary label text.
+- `dataShard` / `data-shard` / `data`: primary fill, white label text.
+- `parityShard` / `parity-shard` / `parity`: red fill, primary stroke, white label text.
+- `panel` / `legend` / `legend-panel`: neutral surface fill, no visible stroke.
+
+Roles also apply the matching component stroke weight and label size. Callers should not pass `fontSize`, `strokeWidth`, or colors unless the user wants a deliberate override.
+
 ## Local Verification
 
 ```bash

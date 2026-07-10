@@ -17,7 +17,7 @@ describe("applyTechnicalPrecisionDefaultsToElement", () => {
     expect(
       applyTechnicalPrecisionDefaultsToElement({
         type: "rectangle",
-        id: "node",
+        id: "generic-rectangle",
         x: 10,
         y: 20,
         width: 160,
@@ -25,7 +25,7 @@ describe("applyTechnicalPrecisionDefaultsToElement", () => {
       }),
     ).toMatchObject({
       type: "rectangle",
-      id: "node",
+      id: "generic-rectangle",
       strokeColor: DEFAULT_ELEMENT_PROPS.strokeColor,
       backgroundColor: DEFAULT_ELEMENT_PROPS.backgroundColor,
       fillStyle: DEFAULT_ELEMENT_PROPS.fillStyle,
@@ -61,6 +61,142 @@ describe("applyTechnicalPrecisionDefaultsToElement", () => {
     });
   });
 
+  it("infers MinIO diagram role colors from ids and labels", () => {
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "rectangle",
+        id: "minio",
+        label: { text: "MinIO" },
+      }),
+    ).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.minioRed,
+      strokeColor: TECHNICAL_PRECISION_COLORS.minioStroke,
+      strokeWidth: 5,
+      label: {
+        fontSize: 30,
+        strokeColor: TECHNICAL_PRECISION_COLORS.white,
+      },
+    });
+
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "rectangle",
+        id: "erasure",
+        label: { text: "ERASURE SET" },
+      }),
+    ).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.transparent,
+      strokeColor: TECHNICAL_PRECISION_COLORS.minioRed,
+      strokeWidth: 3,
+      label: {
+        fontSize: 26,
+        strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+      },
+    });
+
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "rectangle",
+        id: "node-a",
+        label: { text: "NODE" },
+      }),
+    ).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.nodeFill,
+      strokeColor: TECHNICAL_PRECISION_COLORS.nodeFill,
+      strokeWidth: 4,
+      label: {
+        fontSize: 30,
+        strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+      },
+    });
+
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "rectangle",
+        id: "data-a",
+        label: { text: "D" },
+      }),
+    ).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.primary,
+      strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+      strokeWidth: 3,
+      label: {
+        fontSize: 14,
+        strokeColor: TECHNICAL_PRECISION_COLORS.white,
+      },
+    });
+
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "rectangle",
+        id: "parity-a",
+        label: { text: "P" },
+      }),
+    ).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.minioRed,
+      strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+      strokeWidth: 3,
+      label: {
+        fontSize: 14,
+        strokeColor: TECHNICAL_PRECISION_COLORS.white,
+      },
+    });
+  });
+
+  it("uses explicit semantic roles as defaults without leaking role output", () => {
+    const result = applyTechnicalPrecisionDefaultsToElement({
+      type: "rectangle",
+      id: "disk-1",
+      role: "storage",
+    });
+
+    expect(result).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.white,
+      strokeColor: TECHNICAL_PRECISION_COLORS.minioRed,
+      strokeWidth: DEFAULT_ELEMENT_PROPS.strokeWidth,
+    });
+    expect(result).not.toHaveProperty("role");
+  });
+
+  it("uses neutral panel role defaults for legends and sidebars", () => {
+    const result = applyTechnicalPrecisionDefaultsToElement({
+      type: "rectangle",
+      id: "legend",
+      role: "legend-panel",
+    });
+
+    expect(result).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.neutralFill,
+      strokeColor: TECHNICAL_PRECISION_COLORS.transparent,
+      strokeWidth: DEFAULT_ELEMENT_PROPS.strokeWidth,
+    });
+    expect(result).not.toHaveProperty("role");
+  });
+
+  it("accepts readable semantic role aliases", () => {
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "rectangle",
+        id: "disk-1",
+        role: "data-shard",
+      }),
+    ).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.primary,
+      strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+    });
+
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "rectangle",
+        id: "disk-2",
+        role: "parity shard",
+      }),
+    ).toMatchObject({
+      backgroundColor: TECHNICAL_PRECISION_COLORS.minioRed,
+      strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+    });
+  });
+
   it("uses clean text defaults without adding shape fill", () => {
     expect(
       applyTechnicalPrecisionDefaultsToElement({
@@ -73,6 +209,33 @@ describe("applyTechnicalPrecisionDefaultsToElement", () => {
       fontFamily: DEFAULT_FONT_FAMILY,
       fontSize: DEFAULT_FONT_SIZE,
       strokeColor: DEFAULT_ELEMENT_PROPS.strokeColor,
+    });
+  });
+
+  it("does not infer semantic shape roles for free text or connectors", () => {
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "text",
+        id: "legend-storage-label",
+        text: "Storage (HDD, SSD, NVMe)",
+      }),
+    ).toMatchObject({
+      strokeColor: DEFAULT_ELEMENT_PROPS.strokeColor,
+      fontSize: DEFAULT_FONT_SIZE,
+    });
+
+    expect(
+      applyTechnicalPrecisionDefaultsToElement({
+        type: "line",
+        id: "node-bus",
+        points: [
+          [0, 0],
+          [100, 0],
+        ],
+      }),
+    ).toMatchObject({
+      strokeColor: DEFAULT_ELEMENT_PROPS.strokeColor,
+      strokeWidth: DEFAULT_ELEMENT_PROPS.strokeWidth,
     });
   });
 
@@ -102,11 +265,11 @@ describe("applyTechnicalPrecisionDefaultsToElement", () => {
       applyTechnicalPrecisionDefaultsToElement({
         type: "rectangle",
         id: "labeled",
-        label: { text: "NODE" },
+        label: { text: "GENERIC" },
       }),
     ).toMatchObject({
       label: {
-        text: "NODE",
+        text: "GENERIC",
         textAlign: "center",
         verticalAlign: "middle",
         fontFamily: DEFAULT_FONT_FAMILY,

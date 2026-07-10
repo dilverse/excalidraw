@@ -47,11 +47,14 @@ describe("createViewFromElementsInput", () => {
     expect(result.checkpointId).toBe("fixed_checkpoint");
     expect(result.elements[1]).toMatchObject({
       id: "node",
-      strokeColor: DEFAULT_ELEMENT_PROPS.strokeColor,
-      backgroundColor: DEFAULT_ELEMENT_PROPS.backgroundColor,
+      strokeColor: TECHNICAL_PRECISION_COLORS.nodeFill,
+      backgroundColor: TECHNICAL_PRECISION_COLORS.nodeFill,
       fillStyle: DEFAULT_ELEMENT_PROPS.fillStyle,
       roughness: DEFAULT_ELEMENT_PROPS.roughness,
-      label: { text: "NODE" },
+      label: {
+        text: "NODE",
+        strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+      },
     });
     await expect(store.load("fixed_checkpoint")).resolves.toEqual({
       elements: result.elements,
@@ -126,6 +129,67 @@ describe("createViewFromElementsInput", () => {
       id: "minio",
       backgroundColor: TECHNICAL_PRECISION_COLORS.minioRed,
     });
+  });
+
+  it("applies semantic role defaults without explicit style fields", async () => {
+    const result = await createViewFromElementsInput(
+      JSON.stringify([
+        {
+          type: "rectangle",
+          id: "service",
+          role: "minio",
+          label: { text: "SERVICE" },
+        },
+        { type: "rectangle", id: "disk", role: "storage" },
+        {
+          type: "rectangle",
+          id: "payload",
+          role: "data-shard",
+          label: { text: "D" },
+        },
+        {
+          type: "rectangle",
+          id: "parity",
+          role: "parity shard",
+          label: { text: "P" },
+        },
+      ]),
+      new MemoryCheckpointStore(),
+      () => "semantic_defaults",
+    );
+
+    expect(result.elements).toEqual([
+      expect.objectContaining({
+        id: "service",
+        backgroundColor: TECHNICAL_PRECISION_COLORS.minioRed,
+        strokeColor: TECHNICAL_PRECISION_COLORS.minioStroke,
+        label: expect.objectContaining({
+          strokeColor: TECHNICAL_PRECISION_COLORS.white,
+        }),
+      }),
+      expect.objectContaining({
+        id: "disk",
+        backgroundColor: TECHNICAL_PRECISION_COLORS.white,
+        strokeColor: TECHNICAL_PRECISION_COLORS.minioRed,
+      }),
+      expect.objectContaining({
+        id: "payload",
+        backgroundColor: TECHNICAL_PRECISION_COLORS.primary,
+        strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+        label: expect.objectContaining({
+          strokeColor: TECHNICAL_PRECISION_COLORS.white,
+        }),
+      }),
+      expect.objectContaining({
+        id: "parity",
+        backgroundColor: TECHNICAL_PRECISION_COLORS.minioRed,
+        strokeColor: TECHNICAL_PRECISION_COLORS.primary,
+        label: expect.objectContaining({
+          strokeColor: TECHNICAL_PRECISION_COLORS.white,
+        }),
+      }),
+    ]);
+    expect(result.elements.every((element) => !("role" in element))).toBe(true);
   });
 
   it("restores checkpoints and deletes matching ids and bound text", async () => {
