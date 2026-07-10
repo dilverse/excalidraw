@@ -82,7 +82,7 @@ The package should expose:
 
 ### `read_me`
 
-Returns a concise element-format reference for agents. It must describe the repo-native defaults and include a MinIO-style example with the same colors and spacing requested by the design file.
+Returns a concise element-format reference for agents. It must describe the repo-native defaults, make new MCP sessions blank-first, and include only a generic Technical Precision style example so agents do not seed a starter diagram unless the user asks for one.
 
 ### `create_view`
 

@@ -24,9 +24,14 @@ describe("TECHNICAL_PRECISION_REFERENCE", () => {
     );
   });
 
-  it("includes a MinIO-oriented example", () => {
-    expect(TECHNICAL_PRECISION_REFERENCE).toContain('"text":"MinIO"');
-    expect(TECHNICAL_PRECISION_REFERENCE).toContain('"text":"ERASURE SET"');
-    expect(TECHNICAL_PRECISION_REFERENCE).toContain('"text":"NODE"');
+  it("keeps new MCP sessions blank-first", () => {
+    expect(TECHNICAL_PRECISION_REFERENCE).toContain(
+      "A new MCP session starts with an empty scene",
+    );
+    expect(TECHNICAL_PRECISION_REFERENCE).toContain(
+      "Only call create_view after the user asks",
+    );
+    expect(TECHNICAL_PRECISION_REFERENCE).not.toContain('"text":"MinIO"');
+    expect(TECHNICAL_PRECISION_REFERENCE).not.toContain('"text":"ERASURE SET"');
   });
 });

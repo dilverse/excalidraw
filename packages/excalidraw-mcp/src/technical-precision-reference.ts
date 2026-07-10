@@ -27,6 +27,8 @@ Call create_view with a JSON array string of Excalidraw-style elements. The serv
 
 ## Element Rules
 
+- A new MCP session starts with an empty scene. Do not create a starter diagram.
+- Only call create_view after the user asks for a diagram or a concrete edit.
 - Use labeled rectangles for most system boxes.
 - Use rectangle roundness {"type":3} for compact 4px-style technical corners.
 - Use elbow arrows for infrastructure diagrams; omitted arrowheads default to triangle.
@@ -35,16 +37,13 @@ Call create_view with a JSON array string of Excalidraw-style elements. The serv
 - Use restoreCheckpoint as the first element when editing a previous diagram.
 - Use delete pseudo-elements to remove ids from a restored checkpoint.
 
-## MinIO Example
+## Blank-First Example
 
 [
-  {"type":"cameraUpdate","x":0,"y":0,"width":900,"height":675},
-  {"type":"rectangle","id":"minio","x":330,"y":40,"width":260,"height":64,"backgroundColor":"${TECHNICAL_PRECISION_COLORS.minioRed}","strokeColor":"#9a0016","label":{"text":"MinIO","fontSize":28,"strokeColor":"#ffffff"}},
-  {"type":"rectangle","id":"erasure","x":300,"y":150,"width":320,"height":48,"backgroundColor":"transparent","strokeColor":"${TECHNICAL_PRECISION_COLORS.minioRed}","label":{"text":"ERASURE SET","fontSize":22}},
-  {"type":"arrow","id":"minio-erasure","x":460,"y":104,"width":0,"height":46,"points":[[0,0],[0,46]],"strokeColor":"${TECHNICAL_PRECISION_COLORS.primary}"},
-  {"type":"rectangle","id":"node-a","x":120,"y":300,"width":180,"height":52,"backgroundColor":"${TECHNICAL_PRECISION_COLORS.nodeFill}","label":{"text":"NODE","fontSize":26}},
-  {"type":"rectangle","id":"data-a","x":180,"y":470,"width":34,"height":34,"backgroundColor":"${TECHNICAL_PRECISION_COLORS.primary}","strokeColor":"${TECHNICAL_PRECISION_COLORS.primary}","label":{"text":"D","fontSize":14,"strokeColor":"#ffffff"}},
-  {"type":"rectangle","id":"parity-a","x":245,"y":470,"width":34,"height":34,"backgroundColor":"${TECHNICAL_PRECISION_COLORS.minioRed}","strokeColor":"${TECHNICAL_PRECISION_COLORS.primary}","label":{"text":"P","fontSize":14,"strokeColor":"#ffffff"}}
+  {"type":"cameraUpdate","x":0,"y":0,"width":640,"height":360},
+  {"type":"rectangle","id":"service","x":210,"y":96,"width":220,"height":64,"backgroundColor":"${TECHNICAL_PRECISION_COLORS.minioRed}","strokeColor":"#9a0016","label":{"text":"SERVICE","fontSize":26,"strokeColor":"#ffffff"}},
+  {"type":"rectangle","id":"worker","x":210,"y":220,"width":220,"height":52,"backgroundColor":"${TECHNICAL_PRECISION_COLORS.nodeFill}","label":{"text":"WORKER","fontSize":24}},
+  {"type":"arrow","id":"service-worker","x":320,"y":160,"width":0,"height":60,"points":[[0,0],[0,60]],"strokeColor":"${TECHNICAL_PRECISION_COLORS.primary}"}
 ]
 
 The returned checkpointId can be reused by starting the next call with {"type":"restoreCheckpoint","id":"<checkpointId>"}.

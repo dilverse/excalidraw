@@ -54,6 +54,8 @@ PORT=3010 corepack yarn --cwd packages/excalidraw-mcp start
 - `read_me`: returns the element format reference and Technical Precision style defaults.
 - `create_view`: accepts a JSON array string of Excalidraw elements and returns a `checkpointId`.
 
+New MCP sessions are blank-first: the server does not create a starter diagram, and agents should call `create_view` only after the user asks for a diagram or a concrete edit.
+
 `create_view` supports these pseudo-elements:
 
 - `cameraUpdate`: records viewport framing instructions for clients.
