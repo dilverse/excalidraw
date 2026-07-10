@@ -6,6 +6,10 @@ import type { CheckpointData } from "./types.js";
 
 const MAX_CHECKPOINT_BYTES = 5 * 1024 * 1024;
 const MAX_FILE_CHECKPOINTS = 100;
+const DEFAULT_CHECKPOINT_DIR = path.join(
+  os.tmpdir(),
+  "excalidraw-mcp-checkpoints",
+);
 
 export const validateCheckpointId = (id: string) => {
   if (!/^[a-zA-Z0-9_-]+$/.test(id)) {
@@ -18,6 +22,8 @@ export const validateCheckpointId = (id: string) => {
     throw new Error("Invalid checkpoint id: exceeds 64 character limit");
   }
 };
+
+export const validateSessionId = validateCheckpointId;
 
 const assertCheckpointSize = (data: CheckpointData) => {
   const serialized = JSON.stringify(data);
@@ -32,14 +38,26 @@ const assertCheckpointSize = (data: CheckpointData) => {
 export interface CheckpointStore {
   save(id: string, data: CheckpointData): Promise<void>;
   load(id: string): Promise<CheckpointData | null>;
+  forSession?(sessionId: string): CheckpointStore;
 }
 
 export class FileCheckpointStore implements CheckpointStore {
+  private readonly rootDir: string;
   private readonly dir: string;
 
-  constructor(dir = path.join(os.tmpdir(), "excalidraw-mcp-checkpoints")) {
-    this.dir = dir;
+  constructor(dir = DEFAULT_CHECKPOINT_DIR, sessionId?: string) {
+    this.rootDir = dir;
+    this.dir = sessionId ? path.join(this.rootDir, sessionId) : this.rootDir;
+
+    if (sessionId) {
+      validateSessionId(sessionId);
+    }
+
     fs.mkdirSync(this.dir, { recursive: true });
+  }
+
+  forSession(sessionId: string): CheckpointStore {
+    return new FileCheckpointStore(this.rootDir, sessionId);
   }
 
   async save(id: string, data: CheckpointData): Promise<void> {
@@ -108,12 +126,21 @@ export class FileCheckpointStore implements CheckpointStore {
 }
 
 export class MemoryCheckpointStore implements CheckpointStore {
-  private readonly checkpoints = new Map<string, string>();
+  constructor(
+    private readonly sessionId = "default",
+    private readonly checkpoints = new Map<string, string>(),
+  ) {
+    validateSessionId(this.sessionId);
+  }
+
+  forSession(sessionId: string): CheckpointStore {
+    return new MemoryCheckpointStore(sessionId, this.checkpoints);
+  }
 
   async save(id: string, data: CheckpointData): Promise<void> {
     validateCheckpointId(id);
 
-    this.checkpoints.set(id, assertCheckpointSize(data));
+    this.checkpoints.set(this.getCheckpointKey(id), assertCheckpointSize(data));
 
     if (this.checkpoints.size > MAX_FILE_CHECKPOINTS) {
       const oldest = this.checkpoints.keys().next().value;
@@ -127,7 +154,7 @@ export class MemoryCheckpointStore implements CheckpointStore {
   async load(id: string): Promise<CheckpointData | null> {
     validateCheckpointId(id);
 
-    const serialized = this.checkpoints.get(id);
+    const serialized = this.checkpoints.get(this.getCheckpointKey(id));
 
     if (!serialized) {
       return null;
@@ -138,5 +165,9 @@ export class MemoryCheckpointStore implements CheckpointStore {
     } catch {
       return null;
     }
+  }
+
+  private getCheckpointKey(id: string) {
+    return `${this.sessionId}:${id}`;
   }
 }

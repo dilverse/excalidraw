@@ -36,6 +36,7 @@ import { isArrowElement } from "./typeChecks";
 import { syncInvalidIndices } from "./fractionalIndex";
 
 import { redrawTextBoundingBox } from "./textElement";
+import { getDefaultBoundTextStrokeColor } from "./technicalPrecision";
 
 import { LinearElementEditor } from "./linearElementEditor";
 
@@ -228,7 +229,11 @@ const bindTextToContainer = (
     verticalAlign: VERTICAL_ALIGN.MIDDLE,
     ...textProps,
     containerId: container.id,
-    strokeColor: textProps.strokeColor || container.strokeColor,
+    strokeColor: getDefaultBoundTextStrokeColor(
+      container,
+      container.strokeColor,
+      textProps.strokeColor,
+    ),
   });
 
   Object.assign(container, {

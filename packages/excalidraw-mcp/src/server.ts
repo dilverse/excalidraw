@@ -21,7 +21,26 @@ const errorResult = (text: string): CallToolResult => ({
   isError: true,
 });
 
-export const registerTools = (server: McpServer, store: CheckpointStore) => {
+export type ServerSessionOptions = {
+  defaultSessionId?: string;
+};
+
+const getSessionStore = (
+  store: CheckpointStore,
+  sessionId: string | undefined,
+) => {
+  if (!sessionId || !store.forSession) {
+    return store;
+  }
+
+  return store.forSession(sessionId);
+};
+
+export const registerTools = (
+  server: McpServer,
+  store: CheckpointStore,
+  options: ServerSessionOptions = {},
+) => {
   server.registerTool(
     "read_me",
     {
@@ -47,9 +66,13 @@ export const registerTools = (server: McpServer, store: CheckpointStore) => {
       },
       annotations: { readOnlyHint: true },
     },
-    async ({ elements }): Promise<CallToolResult> => {
+    async ({ elements }, extra): Promise<CallToolResult> => {
       try {
-        const result = await createViewFromElementsInput(elements, store);
+        const sessionStore = getSessionStore(
+          store,
+          extra.sessionId ?? options.defaultSessionId,
+        );
+        const result = await createViewFromElementsInput(elements, sessionStore);
         const warningText = result.warnings.length
           ? `\nWarnings:\n- ${result.warnings.join("\n- ")}`
           : "";
@@ -79,13 +102,14 @@ export const registerTools = (server: McpServer, store: CheckpointStore) => {
 
 export const createServer = (
   store: CheckpointStore = new FileCheckpointStore(),
+  options: ServerSessionOptions = {},
 ) => {
   const server = new McpServer({
     name: "Excalidraw Technical Precision",
     version: "0.1.0",
   });
 
-  registerTools(server, store);
+  registerTools(server, store, options);
 
   return server;
 };

@@ -262,6 +262,7 @@ import {
   isEligibleFrameChildType,
   getBindingStrategyForDraggingBindingElementEndpoints,
   parseElementLinkFromURL,
+  getDefaultBoundTextStrokeColor,
 } from "@excalidraw/element";
 
 import type { GlobalPoint, LocalPoint, Radians } from "@excalidraw/math";
@@ -6219,7 +6220,13 @@ class App extends React.Component<AppProps, AppState> {
       newTextElement({
         x: newTextElementPosition.x,
         y: newTextElementPosition.y,
-        strokeColor: this.state.currentItemStrokeColor,
+        strokeColor:
+          shouldBindToContainer && container
+            ? getDefaultBoundTextStrokeColor(
+                container,
+                this.state.currentItemStrokeColor,
+              )
+            : this.state.currentItemStrokeColor,
         backgroundColor: this.state.currentItemBackgroundColor,
         fillStyle: this.state.currentItemFillStyle,
         strokeWidth: this.getCurrentItemStrokeWidth("text"),

@@ -8,6 +8,8 @@ import {
 
 import {
   CODES,
+  COLOR_PALETTE,
+  COLOR_WHITE,
   colorToHex,
   KEYS,
   FONT_FAMILY,
@@ -742,7 +744,7 @@ describe("textWysiwyg", () => {
         y: 20,
         width: 90,
         height: 75,
-        backgroundColor: "red",
+        backgroundColor: COLOR_PALETTE.red[3],
       });
       API.setElements([rectangle]);
 
@@ -755,6 +757,7 @@ describe("textWysiwyg", () => {
       const text = h.elements[1] as ExcalidrawTextElementWithContainer;
       expect(text.type).toBe("text");
       expect(text.containerId).toBe(rectangle.id);
+      expect(text.strokeColor).toBe(COLOR_WHITE);
       expect(rectangle.boundElements).toStrictEqual([
         { id: text.id, type: "text" },
       ]);

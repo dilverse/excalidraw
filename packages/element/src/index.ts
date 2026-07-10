@@ -93,6 +93,7 @@ export * from "./store";
 export * from "./textElement";
 export * from "./textMeasurements";
 export * from "./textWrapping";
+export * from "./technicalPrecision";
 export * from "./transform";
 export * from "./transformHandles";
 export * from "./typeChecks";

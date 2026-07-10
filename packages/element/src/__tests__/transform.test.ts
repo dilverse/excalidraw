@@ -1,4 +1,5 @@
 import { pointFrom } from "@excalidraw/math";
+import { COLOR_PALETTE, COLOR_WHITE } from "@excalidraw/common";
 import { vi } from "vitest";
 
 import {
@@ -6,7 +7,7 @@ import {
   type ExcalidrawElementSkeleton,
 } from "../transform";
 
-import type { ExcalidrawArrowElement } from "../types";
+import type { ExcalidrawArrowElement, ExcalidrawTextElement } from "../types";
 
 const opts = { regenerateIds: false };
 
@@ -967,5 +968,52 @@ describe("Test Transform", () => {
         id: expect.any(String),
       });
     });
+  });
+
+  it("should use white bound text for Technical Precision red filled containers", () => {
+    const excalidrawElements = convertToExcalidrawElements(
+      [
+        {
+          type: "rectangle",
+          x: 100,
+          y: 100,
+          backgroundColor: COLOR_PALETTE.red[3],
+          label: {
+            text: "MinIO",
+          },
+        },
+      ] as ExcalidrawElementSkeleton[],
+      opts,
+    );
+
+    const text = excalidrawElements.find(
+      (element) => element.type === "text",
+    ) as ExcalidrawTextElement;
+
+    expect(text.strokeColor).toBe(COLOR_WHITE);
+  });
+
+  it("should preserve explicit bound text color for red filled containers", () => {
+    const excalidrawElements = convertToExcalidrawElements(
+      [
+        {
+          type: "rectangle",
+          x: 100,
+          y: 100,
+          backgroundColor: COLOR_PALETTE.red[3],
+          label: {
+            text: "MinIO",
+            strokeColor: COLOR_PALETTE.black,
+          },
+        },
+      ] as ExcalidrawElementSkeleton[],
+      opts,
+    );
+
+    const text = excalidrawElements.find(
+      (element) => element.type === "text",
+    ) as ExcalidrawTextElement;
+
+    expect(text.strokeColor).toBe(COLOR_PALETTE.black);
   });
 });
