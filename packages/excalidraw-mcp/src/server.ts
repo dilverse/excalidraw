@@ -1,5 +1,13 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { deflateSync } from "node:zlib";
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type {
+  CallToolResult,
+  ReadResourceResult,
+} from "@modelcontextprotocol/sdk/types.js";
 import { z } from "zod";
 
 import {
@@ -21,6 +29,14 @@ const errorResult = (text: string): CallToolResult => ({
   isError: true,
 });
 
+export const EXCALIDRAW_APP_RESOURCE_URI =
+  "ui://excalidraw/mcp-app-professional-v2.html";
+const MCP_APP_MIME_TYPE = "text/html;profile=mcp-app";
+const MAX_EXPORT_BYTES = 5 * 1024 * 1024;
+
+const serverDir = path.dirname(fileURLToPath(import.meta.url));
+const appHtmlPath = path.join(serverDir, "assets", "mcp-app.html");
+
 export type ServerSessionOptions = {
   defaultSessionId?: string;
 };
@@ -36,11 +52,131 @@ const getSessionStore = (
   return store.forSession(sessionId);
 };
 
+const readAppHtml = () => fs.readFile(appHtmlPath, "utf8");
+
+const appToolMeta = (resourceUri = EXCALIDRAW_APP_RESOURCE_URI) => ({
+  ui: { resourceUri },
+  "ui/resourceUri": resourceUri,
+  "openai/outputTemplate": resourceUri,
+});
+
+const appOnlyToolMeta = {
+  ui: { visibility: ["app"] },
+};
+
+const appResourceMeta = {
+  ui: {
+    prefersBorder: true,
+    csp: {
+      resourceDomains: ["https://esm.sh"],
+      connectDomains: ["https://esm.sh", "https://json.excalidraw.com"],
+    },
+    permissions: { clipboardWrite: {} },
+  },
+  "openai/widgetDescription":
+    "Interactive Excalidraw diagram viewer with Technical Precision defaults.",
+  "openai/widgetPrefersBorder": true,
+  "openai/widgetCSP": {
+    resource_domains: ["https://esm.sh"],
+    connect_domains: ["https://esm.sh", "https://json.excalidraw.com"],
+  },
+};
+
+const concatBuffers = (...buffers: Uint8Array[]) => {
+  let total = 4;
+
+  for (const buffer of buffers) {
+    total += 4 + buffer.length;
+  }
+
+  const out = new Uint8Array(total);
+  const view = new DataView(out.buffer);
+  view.setUint32(0, 1);
+
+  let offset = 4;
+
+  for (const buffer of buffers) {
+    view.setUint32(offset, buffer.length);
+    offset += 4;
+    out.set(buffer, offset);
+    offset += buffer.length;
+  }
+
+  return out;
+};
+
+const exportToExcalidraw = async (json: string) => {
+  const encoder = new TextEncoder();
+  const fileMetadata = encoder.encode(JSON.stringify({}));
+  const dataBytes = encoder.encode(json);
+  const innerPayload = concatBuffers(fileMetadata, dataBytes);
+  const compressed = deflateSync(Buffer.from(innerPayload));
+
+  const cryptoKey = await globalThis.crypto.subtle.generateKey(
+    { name: "AES-GCM", length: 128 },
+    true,
+    ["encrypt"],
+  );
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = await globalThis.crypto.subtle.encrypt(
+    { name: "AES-GCM", iv },
+    cryptoKey,
+    compressed,
+  );
+  const encodingMeta = encoder.encode(
+    JSON.stringify({
+      version: 2,
+      compression: "pako@1",
+      encryption: "AES-GCM",
+    }),
+  );
+  const payload = Buffer.from(
+    concatBuffers(encodingMeta, iv, new Uint8Array(encrypted)),
+  );
+  const response = await fetch("https://json.excalidraw.com/api/v2/post/", {
+    method: "POST",
+    body: payload,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Upload failed: ${response.status}`);
+  }
+
+  const { id } = (await response.json()) as { id?: string };
+  const jwk = await globalThis.crypto.subtle.exportKey("jwk", cryptoKey);
+
+  if (!id || !jwk.k) {
+    throw new Error("Upload did not return a usable Excalidraw share id");
+  }
+
+  return `https://excalidraw.com/#json=${id},${jwk.k}`;
+};
+
 export const registerTools = (
   server: McpServer,
   store: CheckpointStore,
   options: ServerSessionOptions = {},
 ) => {
+  server.registerResource(
+    "Excalidraw MCP App",
+    EXCALIDRAW_APP_RESOURCE_URI,
+    {
+      mimeType: MCP_APP_MIME_TYPE,
+      description: "Interactive Excalidraw MCP app resource.",
+      _meta: appResourceMeta,
+    },
+    async (): Promise<ReadResourceResult> => ({
+      contents: [
+        {
+          uri: EXCALIDRAW_APP_RESOURCE_URI,
+          mimeType: MCP_APP_MIME_TYPE,
+          text: await readAppHtml(),
+          _meta: appResourceMeta,
+        },
+      ],
+    }),
+  );
+
   server.registerTool(
     "read_me",
     {
@@ -65,6 +201,7 @@ export const registerTools = (
           ),
       },
       annotations: { readOnlyHint: true },
+      _meta: appToolMeta(),
     },
     async ({ elements }, extra): Promise<CallToolResult> => {
       try {
@@ -95,6 +232,84 @@ export const registerTools = (
         }
 
         return errorResult(`Failed to create diagram: ${(error as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    "save_checkpoint",
+    {
+      description: "Private app tool for saving user-edited Excalidraw state.",
+      inputSchema: {
+        id: z.string(),
+        data: z.string(),
+      },
+      _meta: appOnlyToolMeta,
+    },
+    async ({ id, data }, extra): Promise<CallToolResult> => {
+      if (Buffer.byteLength(data, "utf8") > MAX_EXPORT_BYTES) {
+        return errorResult(
+          `Checkpoint data exceeds ${MAX_EXPORT_BYTES} byte limit`,
+        );
+      }
+
+      try {
+        const sessionStore = getSessionStore(
+          store,
+          extra.sessionId ?? options.defaultSessionId,
+        );
+        await sessionStore.save(id, JSON.parse(data));
+        return textResult("ok");
+      } catch (error) {
+        return errorResult(`save failed: ${(error as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    "read_checkpoint",
+    {
+      description: "Private app tool for reading a saved Excalidraw checkpoint.",
+      inputSchema: {
+        id: z.string(),
+      },
+      annotations: { readOnlyHint: true },
+      _meta: appOnlyToolMeta,
+    },
+    async ({ id }, extra): Promise<CallToolResult> => {
+      try {
+        const sessionStore = getSessionStore(
+          store,
+          extra.sessionId ?? options.defaultSessionId,
+        );
+        const data = await sessionStore.load(id);
+
+        return textResult(data ? JSON.stringify(data) : "");
+      } catch (error) {
+        return errorResult(`read failed: ${(error as Error).message}`);
+      }
+    },
+  );
+
+  server.registerTool(
+    "export_to_excalidraw",
+    {
+      description:
+        "Private app tool for uploading a diagram to excalidraw.com and returning a share URL.",
+      inputSchema: {
+        json: z.string(),
+      },
+      _meta: appOnlyToolMeta,
+    },
+    async ({ json }): Promise<CallToolResult> => {
+      if (Buffer.byteLength(json, "utf8") > MAX_EXPORT_BYTES) {
+        return errorResult(`Export data exceeds ${MAX_EXPORT_BYTES} byte limit`);
+      }
+
+      try {
+        return textResult(await exportToExcalidraw(json));
+      } catch (error) {
+        return errorResult(`Export failed: ${(error as Error).message}`);
       }
     },
   );

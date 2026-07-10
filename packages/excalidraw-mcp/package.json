@@ -13,7 +13,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "build": "rimraf dist && tsc -p tsconfig.build.json && mkdir -p dist/assets && cp src/assets/mcp-app.html dist/assets/mcp-app.html",
     "start": "node ./dist/main.js",
     "test": "vitest run --root ../.. --config ../../vitest.config.mts packages/excalidraw-mcp/src --watch=false",
     "typecheck": "tsc -p tsconfig.build.json --noEmit"
