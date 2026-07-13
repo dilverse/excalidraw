@@ -42,9 +42,9 @@ describe("Excalidraw MCP app resource", () => {
     expect(toLocalExcalidrawUrl("json=abc,key")).toBe(
       `${DEFAULT_EXCALIDRAW_APP_URL}#json=abc,key`,
     );
-    expect(toLocalExcalidrawUrl("#json=abc,key", "http://localhost:35673")).toBe(
-      "http://localhost:35673/#json=abc,key",
-    );
+    expect(
+      toLocalExcalidrawUrl("#json=abc,key", "http://localhost:35673"),
+    ).toBe("http://localhost:35673/#json=abc,key");
   });
 
   it("advertises the app resource on create_view", async () => {
@@ -80,7 +80,8 @@ describe("Excalidraw MCP app resource", () => {
       expect(content.text).toContain('format("woff2")');
       expect(content.text).toContain("Open in local Excalidraw");
       expect(content.text).toContain("Open local app");
-      expect(content.text).toContain("The host blocked automatic opening");
+      expect(content.text).toContain("Local Excalidraw link ready");
+      expect(content.text).toContain("Edit in local Excalidraw");
       expect(content._meta).toMatchObject({
         ui: {
           prefersBorder: true,
@@ -129,8 +130,11 @@ describe("Excalidraw MCP app resource", () => {
         name: "read_checkpoint",
         arguments: { id: "widget_checkpoint" },
       });
+      const content = result.content as
+        | Array<{ type: "text"; text: string }>
+        | undefined;
 
-      expect((result.content?.[0] as any).text).toBe(
+      expect(content?.[0]?.text).toBe(
         JSON.stringify({
           elements: [{ type: "rectangle", id: "node" }],
         }),

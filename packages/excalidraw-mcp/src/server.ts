@@ -14,10 +14,7 @@ import {
   FileCheckpointStore,
   type CheckpointStore,
 } from "./checkpoint-store.js";
-import {
-  createViewFromElementsInput,
-  CreateViewError,
-} from "./create-view.js";
+import { createViewFromElementsInput, CreateViewError } from "./create-view.js";
 import { TECHNICAL_PRECISION_REFERENCE } from "./technical-precision-reference.js";
 
 const textResult = (text: string): CallToolResult => ({
@@ -37,9 +34,8 @@ const LEGACY_EXCALIDRAW_APP_RESOURCE_URIS = [
 const MCP_APP_MIME_TYPE = "text/html;profile=mcp-app";
 const MAX_EXPORT_BYTES = 5 * 1024 * 1024;
 export const DEFAULT_EXCALIDRAW_APP_URL = "http://127.0.0.1:35673/";
-const DEFAULT_EXCALIDRAW_APP_ORIGIN = new URL(
-  DEFAULT_EXCALIDRAW_APP_URL,
-).origin;
+const DEFAULT_EXCALIDRAW_APP_ORIGIN = new URL(DEFAULT_EXCALIDRAW_APP_URL)
+  .origin;
 export const DEFAULT_EXCALIDRAW_BACKEND_V2_POST_URL =
   "https://json.excalidraw.com/api/v2/post/";
 
@@ -141,6 +137,10 @@ const exportToExcalidraw = async (json: string) => {
   const dataBytes = encoder.encode(json);
   const innerPayload = concatBuffers(fileMetadata, dataBytes);
   const compressed = deflateSync(Buffer.from(innerPayload));
+  const compressedBytes = compressed.buffer.slice(
+    compressed.byteOffset,
+    compressed.byteOffset + compressed.byteLength,
+  ) as ArrayBuffer;
 
   const cryptoKey = await globalThis.crypto.subtle.generateKey(
     { name: "AES-GCM", length: 128 },
@@ -151,7 +151,7 @@ const exportToExcalidraw = async (json: string) => {
   const encrypted = await globalThis.crypto.subtle.encrypt(
     { name: "AES-GCM", iv },
     cryptoKey,
-    compressed,
+    compressedBytes,
   );
   const encodingMeta = encoder.encode(
     JSON.stringify({
@@ -248,7 +248,10 @@ export const registerTools = (
           store,
           extra.sessionId ?? options.defaultSessionId,
         );
-        const result = await createViewFromElementsInput(elements, sessionStore);
+        const result = await createViewFromElementsInput(
+          elements,
+          sessionStore,
+        );
         const warningText = result.warnings.length
           ? `\nWarnings:\n- ${result.warnings.join("\n- ")}`
           : "";
@@ -270,7 +273,9 @@ export const registerTools = (
           return errorResult(error.message);
         }
 
-        return errorResult(`Failed to create diagram: ${(error as Error).message}`);
+        return errorResult(
+          `Failed to create diagram: ${(error as Error).message}`,
+        );
       }
     },
   );
@@ -308,7 +313,8 @@ export const registerTools = (
   server.registerTool(
     "read_checkpoint",
     {
-      description: "Private app tool for reading a saved Excalidraw checkpoint.",
+      description:
+        "Private app tool for reading a saved Excalidraw checkpoint.",
       inputSchema: {
         id: z.string(),
       },
@@ -342,7 +348,9 @@ export const registerTools = (
     },
     async ({ json }): Promise<CallToolResult> => {
       if (Buffer.byteLength(json, "utf8") > MAX_EXPORT_BYTES) {
-        return errorResult(`Export data exceeds ${MAX_EXPORT_BYTES} byte limit`);
+        return errorResult(
+          `Export data exceeds ${MAX_EXPORT_BYTES} byte limit`,
+        );
       }
 
       try {
