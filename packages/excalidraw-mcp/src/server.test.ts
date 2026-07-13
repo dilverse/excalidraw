@@ -62,6 +62,9 @@ describe("Excalidraw MCP app resource", () => {
       });
       expect(content.text).toContain("<title>Excalidraw App</title>");
       expect(content.text).toContain("callServerTool");
+      expect(content.text).toContain("#c8102e");
+      expect(content.text).toContain("#9a0016");
+      expect(content.text).toContain("#ffdad8");
       expect(content._meta).toMatchObject({
         ui: {
           prefersBorder: true,
