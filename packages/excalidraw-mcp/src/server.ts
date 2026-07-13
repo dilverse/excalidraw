@@ -30,9 +30,13 @@ const errorResult = (text: string): CallToolResult => ({
 });
 
 export const EXCALIDRAW_APP_RESOURCE_URI =
-  "ui://excalidraw/mcp-app-professional-v2.html";
+  "ui://excalidraw/mcp-app-professional-v3.html";
+const LEGACY_EXCALIDRAW_APP_RESOURCE_URIS = [
+  "ui://excalidraw/mcp-app-professional-v2.html",
+];
 const MCP_APP_MIME_TYPE = "text/html;profile=mcp-app";
 const MAX_EXPORT_BYTES = 5 * 1024 * 1024;
+export const DEFAULT_EXCALIDRAW_APP_URL = "http://127.0.0.1:35673/";
 
 const serverDir = path.dirname(fileURLToPath(import.meta.url));
 const appHtmlPath = path.join(serverDir, "assets", "mcp-app.html");
@@ -53,6 +57,17 @@ const getSessionStore = (
 };
 
 const readAppHtml = () => fs.readFile(appHtmlPath, "utf8");
+
+export const toLocalExcalidrawUrl = (
+  hash: string,
+  appUrl = process.env.EXCALIDRAW_APP_URL ?? DEFAULT_EXCALIDRAW_APP_URL,
+) => {
+  const url = new URL(appUrl);
+  url.search = "";
+  url.hash = hash.startsWith("#") ? hash.slice(1) : hash;
+
+  return url.toString();
+};
 
 const appToolMeta = (resourceUri = EXCALIDRAW_APP_RESOURCE_URI) => ({
   ui: { resourceUri },
@@ -149,7 +164,7 @@ const exportToExcalidraw = async (json: string) => {
     throw new Error("Upload did not return a usable Excalidraw share id");
   }
 
-  return `https://excalidraw.com/#json=${id},${jwk.k}`;
+  return toLocalExcalidrawUrl(`json=${id},${jwk.k}`);
 };
 
 export const registerTools = (
@@ -157,25 +172,30 @@ export const registerTools = (
   store: CheckpointStore,
   options: ServerSessionOptions = {},
 ) => {
-  server.registerResource(
-    "Excalidraw MCP App",
+  for (const resourceUri of [
     EXCALIDRAW_APP_RESOURCE_URI,
-    {
-      mimeType: MCP_APP_MIME_TYPE,
-      description: "Interactive Excalidraw MCP app resource.",
-      _meta: appResourceMeta,
-    },
-    async (): Promise<ReadResourceResult> => ({
-      contents: [
-        {
-          uri: EXCALIDRAW_APP_RESOURCE_URI,
-          mimeType: MCP_APP_MIME_TYPE,
-          text: await readAppHtml(),
-          _meta: appResourceMeta,
-        },
-      ],
-    }),
-  );
+    ...LEGACY_EXCALIDRAW_APP_RESOURCE_URIS,
+  ]) {
+    server.registerResource(
+      "Excalidraw MCP App",
+      resourceUri,
+      {
+        mimeType: MCP_APP_MIME_TYPE,
+        description: "Interactive Excalidraw MCP app resource.",
+        _meta: appResourceMeta,
+      },
+      async (): Promise<ReadResourceResult> => ({
+        contents: [
+          {
+            uri: resourceUri,
+            mimeType: MCP_APP_MIME_TYPE,
+            text: await readAppHtml(),
+            _meta: appResourceMeta,
+          },
+        ],
+      }),
+    );
+  }
 
   server.registerTool(
     "read_me",
@@ -295,7 +315,7 @@ export const registerTools = (
     "export_to_excalidraw",
     {
       description:
-        "Private app tool for uploading a diagram to excalidraw.com and returning a share URL.",
+        "Private app tool for opening a diagram in the local Excalidraw app server.",
       inputSchema: {
         json: z.string(),
       },

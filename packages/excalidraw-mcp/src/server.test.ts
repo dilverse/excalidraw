@@ -3,8 +3,10 @@ import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 
 import { MemoryCheckpointStore } from "./checkpoint-store";
 import {
+  DEFAULT_EXCALIDRAW_APP_URL,
   createServer,
   EXCALIDRAW_APP_RESOURCE_URI,
+  toLocalExcalidrawUrl,
 } from "./server";
 
 const MCP_APP_MIME_TYPE = "text/html;profile=mcp-app";
@@ -36,6 +38,15 @@ const withClient = async <T>(
 };
 
 describe("Excalidraw MCP app resource", () => {
+  it("builds local Excalidraw app URLs for exported diagrams", () => {
+    expect(toLocalExcalidrawUrl("json=abc,key")).toBe(
+      `${DEFAULT_EXCALIDRAW_APP_URL}#json=abc,key`,
+    );
+    expect(toLocalExcalidrawUrl("#json=abc,key", "http://localhost:35673")).toBe(
+      "http://localhost:35673/#json=abc,key",
+    );
+  });
+
   it("advertises the app resource on create_view", async () => {
     await withClient(async (client) => {
       const { tools } = await client.listTools();
@@ -65,12 +76,28 @@ describe("Excalidraw MCP app resource", () => {
       expect(content.text).toContain("#c8102e");
       expect(content.text).toContain("#9a0016");
       expect(content.text).toContain("#ffdad8");
+      expect(content.text).toContain("Open in local Excalidraw");
       expect(content._meta).toMatchObject({
         ui: {
           prefersBorder: true,
         },
         "openai/widgetPrefersBorder": true,
       });
+    });
+  });
+
+  it("keeps the previous MCP app resource URI readable", async () => {
+    await withClient(async (client) => {
+      const result = await client.readResource({
+        uri: "ui://excalidraw/mcp-app-professional-v2.html",
+      });
+      const content = result.contents[0] as any;
+
+      expect(content).toMatchObject({
+        uri: "ui://excalidraw/mcp-app-professional-v2.html",
+        mimeType: MCP_APP_MIME_TYPE,
+      });
+      expect(content.text).toContain("Open in local Excalidraw");
     });
   });
 
