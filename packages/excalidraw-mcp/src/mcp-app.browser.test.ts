@@ -71,7 +71,7 @@ const findChromeExecutable = () => {
 };
 
 const widgetHarnessHtml = (
-  openLinkResult: "success" | "blocked",
+  openLinkResult: "success" | "blocked" | "hang",
 ) => `<!doctype html>
 <html>
   <head>
@@ -176,6 +176,10 @@ const widgetHarnessHtml = (
         }
 
         if (message.method === "ui/open-link") {
+          if (openLinkResult === "hang") {
+            return;
+          }
+
           reply(openLinkResult === "blocked" ? { isError: true } : {});
           return;
         }
@@ -212,7 +216,11 @@ const startHarnessServer = async () => {
     response.writeHead(200, { "content-type": "text/html; charset=utf-8" });
     response.end(
       widgetHarnessHtml(
-        url.searchParams.get("openLink") === "blocked" ? "blocked" : "success",
+        url.searchParams.get("openLink") === "blocked"
+          ? "blocked"
+          : url.searchParams.get("openLink") === "hang"
+            ? "hang"
+            : "success",
       ),
     );
   });
@@ -313,7 +321,28 @@ const expectLocalLinkModal = async (
   const modalText = await frame.$eval(".export-modal-text", (element) =>
     element.textContent?.trim(),
   );
-  expect(modalText).toContain("If a tab did not open");
+  expect(modalText).toContain("If the local app did not open");
+};
+
+const expectButtonOpensLocalPopup = async (page: Page, title: string) => {
+  const popupPromise = new Promise<Page>((resolvePopup) => {
+    page.once("popup", resolvePopup);
+  });
+  const frame = await clickWidgetButton(page, title);
+  const popup = await popupPromise;
+
+  await popup
+    .waitForFunction((url: string) => window.location.href === url, {
+      timeout: 15_000,
+    }, LOCAL_EXCALIDRAW_URL)
+    .catch(() => undefined);
+
+  expect(popup.url()).toBe(LOCAL_EXCALIDRAW_URL);
+
+  await popup.close().catch(() => undefined);
+  await expectLocalLinkModal(frame);
+
+  return frame;
 };
 
 describe("MCP app browser integration", () => {
@@ -436,6 +465,39 @@ describe("MCP app browser integration", () => {
             event.params?.url === LOCAL_EXCALIDRAW_URL,
         ),
       ).toBe(true);
+    } finally {
+      await page.close();
+    }
+  }, 30_000);
+
+  it("opens the local app URL in a browser tab from Open when host open-link hangs", async () => {
+    const page = await browser.newPage();
+
+    try {
+      await page.goto(`${harness.url}/?openLink=hang`, {
+        waitUntil: "load",
+      });
+
+      await expectButtonOpensLocalPopup(page, "Open in local Excalidraw");
+    } finally {
+      await page.close();
+    }
+  }, 30_000);
+
+  it("opens the local app URL in a browser tab from Edit when host open-link hangs", async () => {
+    const page = await browser.newPage();
+
+    try {
+      await page.goto(`${harness.url}/?openLink=hang`, {
+        waitUntil: "load",
+      });
+
+      await expectButtonOpensLocalPopup(page, "Edit in local Excalidraw");
+
+      const events = await getHostEvents(page);
+      expect(
+        events.some((event) => event.method === "ui/request-display-mode"),
+      ).toBe(false);
     } finally {
       await page.close();
     }
