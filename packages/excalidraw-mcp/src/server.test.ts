@@ -76,10 +76,22 @@ describe("Excalidraw MCP app resource", () => {
       expect(content.text).toContain("#c8102e");
       expect(content.text).toContain("#9a0016");
       expect(content.text).toContain("#ffdad8");
+      expect(content.text).toContain("Geist");
+      expect(content.text).toContain('format("woff2")');
       expect(content.text).toContain("Open in local Excalidraw");
+      expect(content.text).toContain("Open local app");
+      expect(content.text).toContain("The host blocked automatic opening");
       expect(content._meta).toMatchObject({
         ui: {
           prefersBorder: true,
+          csp: {
+            resourceDomains: expect.arrayContaining(["data:"]),
+            connectDomains: expect.arrayContaining([
+              "https://json-dev.excalidraw.com",
+              "https://json.excalidraw.com",
+              "http://127.0.0.1:35673",
+            ]),
+          },
         },
         "openai/widgetPrefersBorder": true,
       });

@@ -37,6 +37,11 @@ const LEGACY_EXCALIDRAW_APP_RESOURCE_URIS = [
 const MCP_APP_MIME_TYPE = "text/html;profile=mcp-app";
 const MAX_EXPORT_BYTES = 5 * 1024 * 1024;
 export const DEFAULT_EXCALIDRAW_APP_URL = "http://127.0.0.1:35673/";
+const DEFAULT_EXCALIDRAW_APP_ORIGIN = new URL(
+  DEFAULT_EXCALIDRAW_APP_URL,
+).origin;
+export const DEFAULT_EXCALIDRAW_BACKEND_V2_POST_URL =
+  "https://json.excalidraw.com/api/v2/post/";
 
 const serverDir = path.dirname(fileURLToPath(import.meta.url));
 const appHtmlPath = path.join(serverDir, "assets", "mcp-app.html");
@@ -83,8 +88,13 @@ const appResourceMeta = {
   ui: {
     prefersBorder: true,
     csp: {
-      resourceDomains: ["https://esm.sh"],
-      connectDomains: ["https://esm.sh", "https://json.excalidraw.com"],
+      resourceDomains: ["https://esm.sh", "data:"],
+      connectDomains: [
+        "https://esm.sh",
+        "https://json-dev.excalidraw.com",
+        "https://json.excalidraw.com",
+        DEFAULT_EXCALIDRAW_APP_ORIGIN,
+      ],
     },
     permissions: { clipboardWrite: {} },
   },
@@ -92,8 +102,13 @@ const appResourceMeta = {
     "Interactive Excalidraw diagram viewer with Technical Precision defaults.",
   "openai/widgetPrefersBorder": true,
   "openai/widgetCSP": {
-    resource_domains: ["https://esm.sh"],
-    connect_domains: ["https://esm.sh", "https://json.excalidraw.com"],
+    resource_domains: ["https://esm.sh", "data:"],
+    connect_domains: [
+      "https://esm.sh",
+      "https://json-dev.excalidraw.com",
+      "https://json.excalidraw.com",
+      DEFAULT_EXCALIDRAW_APP_ORIGIN,
+    ],
   },
 };
 
@@ -148,10 +163,14 @@ const exportToExcalidraw = async (json: string) => {
   const payload = Buffer.from(
     concatBuffers(encodingMeta, iv, new Uint8Array(encrypted)),
   );
-  const response = await fetch("https://json.excalidraw.com/api/v2/post/", {
-    method: "POST",
-    body: payload,
-  });
+  const response = await fetch(
+    process.env.EXCALIDRAW_BACKEND_V2_POST_URL ??
+      DEFAULT_EXCALIDRAW_BACKEND_V2_POST_URL,
+    {
+      method: "POST",
+      body: payload,
+    },
+  );
 
   if (!response.ok) {
     throw new Error(`Upload failed: ${response.status}`);
