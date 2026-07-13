@@ -27,8 +27,9 @@ const errorResult = (text: string): CallToolResult => ({
 });
 
 export const EXCALIDRAW_APP_RESOURCE_URI =
-  "ui://excalidraw/mcp-app-professional-v3.html";
+  "ui://excalidraw/mcp-app-professional-v4.html";
 const LEGACY_EXCALIDRAW_APP_RESOURCE_URIS = [
+  "ui://excalidraw/mcp-app-professional-v3.html",
   "ui://excalidraw/mcp-app-professional-v2.html",
 ];
 const MCP_APP_MIME_TYPE = "text/html;profile=mcp-app";

@@ -99,18 +99,21 @@ describe("Excalidraw MCP app resource", () => {
     });
   });
 
-  it("keeps the previous MCP app resource URI readable", async () => {
+  it("keeps previous MCP app resource URIs readable", async () => {
     await withClient(async (client) => {
-      const result = await client.readResource({
-        uri: "ui://excalidraw/mcp-app-professional-v2.html",
-      });
-      const content = result.contents[0] as any;
+      for (const uri of [
+        "ui://excalidraw/mcp-app-professional-v3.html",
+        "ui://excalidraw/mcp-app-professional-v2.html",
+      ]) {
+        const result = await client.readResource({ uri });
+        const content = result.contents[0] as any;
 
-      expect(content).toMatchObject({
-        uri: "ui://excalidraw/mcp-app-professional-v2.html",
-        mimeType: MCP_APP_MIME_TYPE,
-      });
-      expect(content.text).toContain("Open in local Excalidraw");
+        expect(content).toMatchObject({
+          uri,
+          mimeType: MCP_APP_MIME_TYPE,
+        });
+        expect(content.text).toContain("Open in local Excalidraw");
+      }
     });
   });
 
